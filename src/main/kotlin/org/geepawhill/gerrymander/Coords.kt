@@ -1,6 +1,15 @@
 package org.geepawhill.gerrymander
 
 data class Coords(val x: Int, val y: Int) {
+
+    val neighbors
+        get() = arrayOf(
+            get(Direction.NORTH),
+            get(Direction.EAST),
+            get(Direction.SOUTH),
+            get(Direction.WEST)
+        )
+
     operator fun get(direction: Direction) =
         when (direction) {
             Direction.NORTH -> Coords(x, y - 1)

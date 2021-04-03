@@ -64,4 +64,20 @@ class OminoTest {
         assertThat(Omino(Coords(0, 0))).isEqualTo(Omino(Coords(0, 0)))
         assertThat(Omino(Coords(0, 0))).isNotEqualTo(Omino(Coords(0, 0), Coords(0, 1)))
     }
+
+    @Test
+    fun `expands from one into two ominos`() {
+        assertThat(zeroZero.expand()).containsExactly(
+            Omino(Coords(0, 0), Coords(0, 1)),
+            Omino(Coords(0, 0), Coords(1, 0))
+        )
+    }
+
+    @Test
+    fun `fixed generates correct sizes`() {
+        assertThat(Omino.fixed(1).size).isEqualTo(1)
+        assertThat(Omino.fixed(2).size).isEqualTo(2)
+        Omino.fixed(3).forEach { it.ascii() }
+        assertThat(Omino.fixed(3).size).isEqualTo(6)
+    }
 }
