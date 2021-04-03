@@ -14,4 +14,8 @@ data class Coords(val x: Int, val y: Int) {
         }
 
     override fun toString(): String = "($x,$y)"
+
+    companion object {
+        val comparator = compareBy<Coords> { it.x }.thenBy { it.y }
+    }
 }
