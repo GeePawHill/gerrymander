@@ -1,5 +1,6 @@
 package org.geepawhill.gerrymander
 
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Insets
 import javafx.scene.Node
 import javafx.scene.layout.*
@@ -7,6 +8,8 @@ import javafx.scene.paint.Color
 import tornadofx.*
 
 class MainView : View("Gerrymandering Game") {
+
+    val orderProperty = SimpleIntegerProperty(5)
 
     lateinit var ominos: FlowPane
     override val root = anchorpane {
@@ -17,10 +20,10 @@ class MainView : View("Gerrymandering Game") {
             tab("Ominoes") {
                 borderpane {
                     left = form {
-                        label("controls")
-                        button("3") {
+                        textfield(orderProperty)
+                        button("Go") {
                             action {
-                                updateOminos(5)
+                                updateOminos(orderProperty.value)
                             }
                         }
                     }
@@ -49,9 +52,6 @@ class MainView : View("Gerrymandering Game") {
     fun FlowPane.makeOminoView(order: Int, omino: Omino) {
         pane {
             paddingAll = 5.0
-//            rectangle(0, 0, (order) * CELL_SIZE, (order) * CELL_SIZE) {
-//                fill = Color.RED
-//            }
             for (coords in omino) {
                 rectangle(coords.x * CELL_SIZE + 1, coords.y * CELL_SIZE + 1, CELL_SIZE - 2, CELL_SIZE - 2) {
                     fill = Color.BLUE
