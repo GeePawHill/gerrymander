@@ -1,6 +1,6 @@
 package org.geepawhill.gerrymander
 
-data class Omino private constructor(private val base: MutableSet<Coords> = mutableSetOf()) : Set<Coords> by base {
+data class Omino private constructor(private val base: Set<Coords> = setOf()) : Set<Coords> by base {
 
     fun expand(): Set<Omino> {
         val result = mutableSetOf<Omino>()

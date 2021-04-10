@@ -9,6 +9,7 @@ import tornadofx.*
 
 class MainView : View("Gerrymandering Game") {
 
+    val countProperty = SimpleIntegerProperty(0)
     val orderProperty = SimpleIntegerProperty(5)
 
     lateinit var ominos: FlowPane
@@ -21,6 +22,7 @@ class MainView : View("Gerrymandering Game") {
                 borderpane {
                     left = form {
                         textfield(orderProperty)
+                        label(countProperty)
                         button("Go") {
                             action {
                                 updateOminos(orderProperty.value)
@@ -41,6 +43,7 @@ class MainView : View("Gerrymandering Game") {
 
     fun updateOminos(order: Int) {
         val all = Omino.fixed(order)
+        countProperty.value = all.size
         with(ominos) {
             children.clear()
             for (omino in all) {
