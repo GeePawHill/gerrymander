@@ -13,6 +13,13 @@ data class Omino private constructor(private val base: Set<Coords> = setOf()) : 
         return result
     }
 
+    fun links(grid: Coords, at: Coords): Set<Coords> {
+        val xlate = Coords(at.x - first().x, at.y)
+        val result = map { it.translate(xlate) }.filter { it.x >= 0 && it.y >= 0 && it.x < grid.x && it.y < grid.y }
+        return if (size == result.size) result.toSet()
+        else setOf()
+    }
+
     fun ascii() {
         println()
         for (x in 0 until size) {

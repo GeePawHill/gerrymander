@@ -50,6 +50,13 @@ class OminoTest {
     }
 
     @Test
+    fun `reverse l shape`() {
+        val reverseL = Omino(Coords(0, 1), Coords(1, 0), Coords(1, 1))
+        println(reverseL.ascii())
+        reverseL.forEach { println(it) }
+    }
+
+    @Test
     fun `normalizes all`() {
         assertThat(Omino(setOf(Coords(0, -1), Coords(1, -1)))).containsExactly(Coords(0, 0), Coords(1, 0))
     }

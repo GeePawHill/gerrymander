@@ -22,6 +22,8 @@ data class Coords(val x: Int, val y: Int) {
             Direction.SOUTHWEST -> Coords(x - 1, y + 1)
         }
 
+    fun translate(to: Coords): Coords = Coords(x + to.x, y + to.y)
+
     override fun toString(): String = "($x,$y)"
 
     companion object {
