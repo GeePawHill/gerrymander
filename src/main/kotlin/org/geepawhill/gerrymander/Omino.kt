@@ -1,5 +1,7 @@
 package org.geepawhill.gerrymander
 
+typealias Link = List<Coords>
+
 data class Omino private constructor(private val base: Set<Coords> = setOf()) : Set<Coords> by base {
 
     fun expand(): Set<Omino> {
@@ -13,11 +15,15 @@ data class Omino private constructor(private val base: Set<Coords> = setOf()) : 
         return result
     }
 
-    fun links(grid: Coords, at: Coords): Set<Coords> {
+    fun links(grid: Coords, at: Coords): List<Link> {
         val xlate = Coords(at.x - first().x, at.y)
-        val result = map { it.translate(xlate) }.filter { it.x >= 0 && it.y >= 0 && it.x < grid.x && it.y < grid.y }
-        return if (size == result.size) result.toSet()
-        else setOf()
+        val first = map { it.translate(xlate) }.filter { it.x >= 0 && it.y >= 0 && it.x < grid.x && it.y < grid.y }
+        if (first.size < size) return listOf()
+        val result = mutableListOf<Link>()
+        for (newStart in first) {
+            result += listOf(newStart) + first.filter { it != newStart }
+        }
+        return result
     }
 
     fun ascii() {
