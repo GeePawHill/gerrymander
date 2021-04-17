@@ -5,20 +5,50 @@ Placement
     Conceptually, for a placement of order O there are O links. Each of these has the same constituents, but with
     a different zero'th member. ABC BAC CAB, for instance.
 
-    link -- these coords are the placement itself
-    dead links -- the links that specify the same placement as link
-    backtrack links -- links that were removed because they conflict with link
+    links -- the O links for the placement
+    collision links -- links that were removed because they conflict with links
+    examined links -- links that following moves tried to use but failed
+
+backtrack
+    placements are kept in a stack that represent the part of the move tree we're exploring
+    placement = pop()
+    previous = lastOrNull()
+    put placement's links in previous's examined links list
+        note: if you're popping the 0th placement, its links are truly dead.
+    put placement's collisions in the table
+    put placement's examineds in the table
+
+place
+    pick a link
+    links = link + its O-1 re-orderings
+    remove links from table
+    collisions = any table link that contains one of the placement's coordinates
+    examined = []
+
+backtrackIfNeeded
+    Any time we don't have any links in the table, we've hit a dead end.
+    We want to backtrack until the table has links again, which may be multiple times.
+    If we still are out of links after we've emptied the stack, we have an unsolvable problem.
+
+solve()
+    generate all ominos
+    generate all links
+    while(placements<P)
+        if backtrackIfNeeded still doesn't get links in the table
+            exit with failure
+        place
+
 
 Given order O ominos in a W by H plane, the number of placements P = (W*H)/O, which must be an integer.
 Example: pentominos in a 5x5 is P = 5. trominos in a 6x6 is P = 12.
 
 While the solution doesn't have enough placements
     backtrackIfNeeded()
-    while links is empty, and solution has placements backtrack
-        pop the most recent placement
-        put the backtrack links back in the list
-        put the dead links in the solution's reset list
-    If there are no placements and no links we're dead!
+        while links is empty, and solution has placements backtrack
+            pop the most recent placement
+            put the collisions links back in the list
+            put the dead links in the solution's reset list
+        If there are no placements and no links we're dead!
     Pick a link
 
     Remove each link with the same constituents and put it in dead links.
