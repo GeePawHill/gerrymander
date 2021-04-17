@@ -1,0 +1,37 @@
+Link
+    List of coords.
+
+Placement
+    Conceptually, for a placement of order O there are O links. Each of these has the same constituents, but with
+    a different zero'th member. ABC BAC CAB, for instance.
+
+    link -- these coords are the placement itself
+    dead links -- the links that specify the same placement as link
+    backtrack links -- links that were removed because they conflict with link
+
+Given order O ominos in a W by H plane, the number of placements P = (W*H)/O, which must be an integer.
+Example: pentominos in a 5x5 is P = 5. trominos in a 6x6 is P = 12.
+
+While the solution doesn't have enough placements
+    backtrackIfNeeded()
+    while links is empty, and solution has placements backtrack
+        pop the most recent placement
+        put the backtrack links back in the list
+        put the dead links in the solution's reset list
+    If there are no placements and no links we're dead!
+    Pick a link
+
+    Remove each link with the same constituents and put it in dead links.
+        These are dead links, and will not come back. Either this tiling works, and doesn't come back,
+        or we'll hit a dead end, and it means this placement isn't valid given the prior placements.
+
+    Remove each link with *any* of the constituents and put it in backtrack links.
+        There are backtrackable links, and may come back. If we backtrack, these are still valid links,
+        because they're different from the one we chose.
+
+If we exit the loop because we have enough placements, we have a solution.
+If we run out of links, we have to backtrack.
+
+
+
+
