@@ -11,17 +11,33 @@ class SolverTest {
     val links = fixed.flatMap { it.links(size) }
 
     @Test
-    fun `backtrack restores collisions and dead`() {
-        val placement = Placement(setOf(links[0]), setOf(links[1]))
+    fun `backtrack restores collisions`() {
+        val placement = Move(emptySet(), setOf(links[0]))
         solver.placements += placement
         solver.backtrack()
-        assertThat(solver.links).contains(links[1])
-        assertThat(solver.dead).contains(links[0])
+        assertThat(solver.links).contains(links[0])
+    }
+
+    @Test
+    fun `backtrack restores examined`() {
+        val placement = Move(emptySet(), emptySet())
+        placement.examined += links[0]
+        solver.placements += placement
+        solver.backtrack()
+        assertThat(solver.links).contains(links[0])
+    }
+
+    @Test
+    fun `backtrack on one-item stack remembers examined`() {
+        val placement = Move(setOf(links[0]), emptySet())
+        solver.placements += placement
+        solver.backtrack()
+        assertThat(solver.examined).contains(links[0])
     }
 
     @Test
     fun `backtrackIfNeeded backtracks with no links`() {
-        val placement = Placement(setOf(links[0]), setOf(links[1]))
+        val placement = Move(setOf(links[0]), setOf(links[1]))
         solver.placements += placement
         assertThat(solver.backtrackIfNeeded()).isTrue()
         assertThat(solver.links).isNotEmpty()
@@ -29,7 +45,7 @@ class SolverTest {
 
     @Test
     fun `backtrackIfNeeded no-ops if there are links`() {
-        val placement = Placement(setOf(links[0]), setOf(links[1]))
+        val placement = Move(setOf(links[0]), setOf(links[1]))
         solver.placements += placement
         solver.links += links[2]
         assertThat(solver.backtrackIfNeeded()).isTrue()

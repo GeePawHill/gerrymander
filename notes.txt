@@ -14,9 +14,13 @@ backtrack
     placement = pop()
     previous = lastOrNull()
     put placement's links in previous's examined links list
-        note: if you're popping the 0th placement, its links are truly dead.
+        note: if you're popping the 0th placement, its links are truly dead. Put them on the solver's reset list.
     put placement's collisions in the table
     put placement's examineds in the table
+
+reset
+    backtrack until there are no placements
+    restore the reset list
 
 place
     pick a link
