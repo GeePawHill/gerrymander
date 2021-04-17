@@ -22,7 +22,7 @@ reset
     backtrack until there are no placements
     restore the reset list
 
-place
+move
     pick a link
     links = link + its O-1 re-orderings
     remove links from table
@@ -40,7 +40,7 @@ solve()
     while(placements<P)
         if backtrackIfNeeded still doesn't get links in the table
             exit with failure
-        place
+        move
 
 
 Given order O ominos in a W by H plane, the number of placements P = (W*H)/O, which must be an integer.
