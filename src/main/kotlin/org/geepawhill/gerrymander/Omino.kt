@@ -26,6 +26,14 @@ data class Omino private constructor(private val base: Set<Coords> = setOf()) : 
         return result
     }
 
+    fun links(grid: Coords): List<Link> {
+        return (0 until grid.x).flatMap { x ->
+            (0 until grid.y).flatMap { y ->
+                links(grid, Coords(x, y))
+            }
+        }
+    }
+
     fun ascii() {
         println()
         for (x in 0 until size) {

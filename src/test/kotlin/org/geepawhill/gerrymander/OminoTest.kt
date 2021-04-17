@@ -51,13 +51,6 @@ class OminoTest {
     }
 
     @Test
-    fun `reverse l shape`() {
-        val reverseL = Omino(Coords(0, 1), Coords(1, 0), Coords(1, 1))
-        println(reverseL.ascii())
-        reverseL.forEach { println(it) }
-    }
-
-    @Test
     fun `normalizes all`() {
         assertThat(Omino(setOf(Coords(0, -1), Coords(1, -1)))).containsExactly(Coords(0, 0), Coords(1, 0))
     }
@@ -114,6 +107,30 @@ class OminoTest {
         assertThat(Omino(zeroZero, Coords(1, 0)).links(gridSize, Coords(0, 0))).containsExactly(
             listOf(Coords(0, 0), Coords(1, 0)),
             listOf(Coords(1, 0), Coords(0, 0))
+        )
+    }
+
+    @Test
+    fun `correct links on l-shaped omino`() {
+        val altGridSize = Coords(6, 6)
+        val tileA = Coords(2, 4)
+        val tileB = Coords(2, 5)
+        val tileC = Coords(3, 4)
+        assertThat(Omino(zeroZero, Coords(0, 1), Coords(1, 0)).links(altGridSize, tileA)).containsExactly(
+            listOf(tileA, tileB, tileC),
+            listOf(tileB, tileA, tileC),
+            listOf(tileC, tileA, tileB)
+        )
+    }
+
+    @Test
+    fun `all links for omino`() {
+        val actual = Omino(zeroZero, Coords(1, 0)).links(Coords(2, 2))
+        assertThat(actual).containsExactly(
+            listOf(Coords(0, 0), Coords(1, 0)),
+            listOf(Coords(1, 0), Coords(0, 0)),
+            listOf(Coords(0, 1), Coords(1, 1)),
+            listOf(Coords(1, 1), Coords(0, 1))
         )
     }
 }
