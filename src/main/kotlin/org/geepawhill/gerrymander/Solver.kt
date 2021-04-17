@@ -12,4 +12,11 @@ class Solver(val order: Int, size: Coords) {
         placement.collisions.forEach { links += it }
         placement.links.forEach { dead += it }
     }
+
+    fun backtrackIfNeeded(): Boolean {
+        while (links.isEmpty() && placements.isNotEmpty()) {
+            backtrack()
+        }
+        return links.isNotEmpty()
+    }
 }
