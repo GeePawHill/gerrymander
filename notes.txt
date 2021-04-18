@@ -1,3 +1,32 @@
+Placement
+    An immutable set of coords representing a single omino that's actually at a location on a board.
+    The call omino.place(size,at) tries to make a placement of that omino at that location on that sized board.
+    The call omino.place(size) collects the successes and produces a list of possible placement for an omino.
+
+cellToPlacement
+    A Map<Coords,MutableList<Placement>>
+    For each coords on the grid, this is the list of placements that cover it.
+    Given a placement, we can always populate this map.
+
+The cellToPlacement is one data struct, but is effectively the many-to-many relationship from the algo.
+We can go from cell to all its placements, and we can go from a placement to all its cells. We can also determine
+which cells have the fewest placements available.
+
+Move
+    This is an actual move in the "game tree" of the algorithm. It specifies a particular placement and the
+    needed information to undo that placement (and possibly any follow-on moves).
+    placement - the actual placement
+    collisions - the placements this one makes illegal, that were hence removed from the map by this move.
+    examined - the placements from child moves that have already been tried but failed
+
+move()
+    move.placement = pick a placement from cellToPlacement
+    for each cell in move.placement
+        remove move.placement from it
+        for each remaining placement that uses that cell
+            for cell in remaining
+                remove placement from map[cell]
+
 Link
     List of coords.
 
@@ -10,13 +39,13 @@ Placement
     examined links -- links that following moves tried to use but failed
 
 backtrack
-    placements are kept in a stack that represent the part of the move tree we're exploring
-    placement = pop()
+    moves are kept in a stack that represent the part of the move tree we're exploring
+    move = pop()
     previous = lastOrNull()
-    put placement's links in previous's examined links list
-        note: if you're popping the 0th placement, its links are truly dead. Put them on the solver's reset list.
-    put placement's collisions in the table
-    put placement's examineds in the table
+    put move's placement in previous's examined links list
+        note: if you're popping the 0th move, its placements are truly dead. Put them on the solver's reset list.
+    put move's collisions back in the map
+    put move's examineds back in the map
 
 reset
     backtrack until there are no placements
