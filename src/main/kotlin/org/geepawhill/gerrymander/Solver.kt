@@ -1,6 +1,14 @@
 package org.geepawhill.gerrymander
 
-class Solver(val order: Int, size: Coords) {
+import com.google.common.collect.ArrayListMultimap
+
+class Solver {
+
+    val cellToPlacement = ArrayListMultimap.create<Coords, Link>()
+
+    fun solve(order: Int, size: Coords) {
+
+    }
 
     val moves = mutableListOf<Move>()
     val examined = mutableSetOf<Link>()
