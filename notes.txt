@@ -1,12 +1,15 @@
 Placement
     An immutable set of coords representing a single omino that's actually at a location on a board.
+    (Ominos are themselves always normalized to least-x and least-y)
     The call omino.place(size,at) tries to make a placement of that omino at that location on that sized board.
     The call omino.place(size) collects the successes and produces a list of possible placement for an omino.
 
 cellToPlacement
-    A Map<Coords,MutableList<Placement>>
     For each coords on the grid, this is the list of placements that cover it.
-    Given a placement, we can always populate this map.
+    Effectively, a Map<Coords,Set<Placement>>, but API's extended to:
+        add(placement) which puts the placement to every Coords in it.
+        remove(placement,uncoverable) which removes the placement from every Coords in it,
+        and adds any newly empty cell to uncoverable
 
 The cellToPlacement is one data struct, but is effectively the many-to-many relationship from the algo.
 We can go from cell to all its placements, and we can go from a placement to all its cells. We can also determine
@@ -16,16 +19,50 @@ Move
     This is an actual move in the "game tree" of the algorithm. It specifies a particular placement and the
     needed information to undo that placement (and possibly any follow-on moves).
     placement - the actual placement
-    collisions - the placements this one makes illegal, that were hence removed from the map by this move.
-    examined - the placements from child moves that have already been tried but failed
+    blocked - the placements this move makes illegal, that were hence removed from the map by this move.
+    examined - the placements from immediate child moves that have already been tried but failed
+    uncoverable - any *coords* that no longer have placements in the map
 
-move()
-    move.placement = pick a placement from cellToPlacement
-    for each cell in move.placement
-        remove move.placement from it
-        for each remaining placement that uses that cell
-            for cell in remaining
-                remove placement from map[cell]
+
+move(placement)
+    move.placement = placement
+    map.remove(placement,mutableSet) // ignore newly empties
+    for(cell in placement)
+        for(remaining in cell)
+            move.blocked += remaining
+            map.remove(remaining,move.uncoverable)
+    return move
+
+map.add(placement)
+    for(cell in placement)
+        map[cell]+=placement
+
+map.remove(placement,unreachables)
+    // This placement is blocked by some other placement
+    // We remove it as an option for every cell that has it
+    // If that empties one of those cells, we may have actually bottomed out
+    for cell in placement
+        map[cell]-=placement
+        if the cell has zero entries
+            remove it from the map
+            add it to unreachables
+
+solve()
+    find all placements and add them to the map
+    while(there are cells in the map)
+        pick a placement
+        move = move(placement)
+        if(move.unreachables) backtrack(move)
+        else push(move)
+
+backtrack(move)
+    put move.placement in predecessor move.examined or solver's reset list
+    for each placement in move.collisions + move.examined
+        map.add(placement)
+
+pick a placement
+    sort the keys by number of placements in them.
+    return the placement that has the fewest placements
 
 Link
     List of coords.
