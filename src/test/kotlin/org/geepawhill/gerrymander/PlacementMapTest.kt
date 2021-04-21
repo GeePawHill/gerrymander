@@ -14,7 +14,7 @@ class PlacementMapTest {
     }
 
     @Test
-    fun `add adds right entry`() {
+    fun `add adds correct entry`() {
         map.add(one)
         assertThat(map.size).isEqualTo(1)
         assertThat(map[Coords(2, 2)]).containsExactly(one)
@@ -25,5 +25,23 @@ class PlacementMapTest {
         map.add(one)
         map.add(two)
         assertThat(map[Coords(2, 2)]).containsExactly(one, two)
+    }
+
+    @Test
+    fun `remove removes & remembers cleared cells`() {
+        val emptied = mutableSetOf<Coords>()
+        map.add(one)
+        map.remove(one, emptied)
+        assertThat(emptied).contains(one.first())
+    }
+
+    @Test
+    fun `remove removes & does not remember non-emptied cells`() {
+        val emptied = mutableSetOf<Coords>()
+        map.add(one)
+        map.add(two)
+        map.remove(one, emptied)
+        assertThat(emptied).isEmpty()
+        assertThat(map[one.first()]).contains(two)
     }
 }

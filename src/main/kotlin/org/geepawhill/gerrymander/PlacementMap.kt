@@ -11,7 +11,18 @@ class PlacementMap {
         }
     }
 
-    operator fun get(coords: Coords): Set<Placement> {
+    fun remove(placement: Placement, emptied: MutableSet<Coords>) {
+        for (cell in placement) {
+            val set = this[cell]
+            set.remove(placement)
+            if (set.isEmpty()) {
+                emptied += cell
+                map.remove(cell)
+            }
+        }
+    }
+
+    operator fun get(coords: Coords): MutableSet<Placement> {
         return map.getOrDefault(coords, mutableSetOf())
     }
 }
