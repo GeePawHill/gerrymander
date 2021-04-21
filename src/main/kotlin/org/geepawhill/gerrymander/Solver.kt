@@ -4,15 +4,15 @@ import com.google.common.collect.ArrayListMultimap
 
 class Solver {
 
-    val cellToPlacement = ArrayListMultimap.create<Coords, Link>()
+    val cellToPlacement = ArrayListMultimap.create<Coords, Placement>()
 
     fun solve(order: Int, size: Coords) {
 
     }
 
     val moves = mutableListOf<Move>()
-    val examined = mutableSetOf<Link>()
-    val links = mutableListOf<Link>()
+    val examined = mutableSetOf<Placement>()
+    val links = mutableListOf<Placement>()
 
     fun backtrack() {
         if (moves.isEmpty()) return

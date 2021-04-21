@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test
 
 class SolverTest {
     val size = Coords(2, 2)
-    val solver = Solver(2, size)
+    val solver = Solver()
 
-    val links = Omino.fixed(2).flatMap { it.links(size) }
+    val links = Omino.fixed(2).flatMap { it.placements(size) }
 
     @Test
     fun `backtrack restores collisions`() {

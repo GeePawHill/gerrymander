@@ -83,54 +83,50 @@ class OminoTest {
     }
 
     @Test
-    fun `no links if negative x`() {
-        assertThat(zeroZero.links(gridSize, Coords(-1, 0))).isEmpty()
+    fun `no placement if negative x`() {
+        assertThat(zeroZero.placement(gridSize, Coords(-1, 0))).isEmpty()
     }
 
     @Test
-    fun `no links if negative y`() {
-        assertThat(zeroZero.links(gridSize, Coords(0, -1))).isEmpty()
+    fun `no placement if negative y`() {
+        assertThat(zeroZero.placement(gridSize, Coords(0, -1))).isEmpty()
     }
 
     @Test
-    fun `no links if x bigger than width`() {
-        assertThat(zeroZero.links(gridSize, Coords(5, 0))).isEmpty()
+    fun `no placement if x bigger than width`() {
+        assertThat(zeroZero.placement(gridSize, Coords(5, 0))).isEmpty()
     }
 
     @Test
-    fun `no links if y bigger than height`() {
-        assertThat(zeroZero.links(gridSize, Coords(0, 5))).isEmpty()
+    fun `no placement if y bigger than height`() {
+        assertThat(zeroZero.placement(gridSize, Coords(0, 5))).isEmpty()
     }
 
     @Test
-    fun `correct links if bigger than one coord`() {
-        assertThat(Omino(zeroZero, Coords(1, 0)).links(gridSize, Coords(0, 0))).containsExactly(
-            listOf(Coords(0, 0), Coords(1, 0)),
-            listOf(Coords(1, 0), Coords(0, 0))
+    fun `correct placement if bigger than one coord`() {
+        assertThat(Omino(zeroZero, Coords(1, 0)).placement(gridSize, Coords(0, 0))).isEqualTo(
+            setOf(Coords(0, 0), Coords(1, 0))
         )
     }
 
     @Test
-    fun `correct links on l-shaped omino`() {
+    fun `correct placement on l-shaped omino`() {
         val altGridSize = Coords(6, 6)
         val tileA = Coords(2, 4)
         val tileB = Coords(2, 5)
         val tileC = Coords(3, 4)
-        assertThat(Omino(zeroZero, Coords(0, 1), Coords(1, 0)).links(altGridSize, tileA)).containsExactly(
-            listOf(tileA, tileB, tileC),
-            listOf(tileB, tileA, tileC),
-            listOf(tileC, tileA, tileB)
+        val cornerL = Omino(zeroZero, Coords(0, 1), Coords(1, 0))
+        assertThat(cornerL.placement(altGridSize, tileA)).containsExactly(
+            tileA, tileB, tileC,
         )
     }
 
     @Test
     fun `all links for omino`() {
-        val actual = Omino(zeroZero, Coords(1, 0)).links(Coords(2, 2))
+        val actual = Omino(zeroZero, Coords(1, 0)).placements(Coords(2, 2))
         assertThat(actual).containsExactly(
-            listOf(Coords(0, 0), Coords(1, 0)),
-            listOf(Coords(1, 0), Coords(0, 0)),
-            listOf(Coords(0, 1), Coords(1, 1)),
-            listOf(Coords(1, 1), Coords(0, 1))
+            setOf(Coords(0, 0), Coords(1, 0)),
+            setOf(Coords(0, 1), Coords(1, 1)),
         )
     }
 }

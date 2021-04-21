@@ -1,6 +1,6 @@
 package org.geepawhill.gerrymander
 
-typealias Link = List<Coords>
+typealias Placement = Set<Coords>
 
 data class Omino private constructor(private val base: Set<Coords> = setOf()) : Set<Coords> by base {
 
@@ -15,23 +15,17 @@ data class Omino private constructor(private val base: Set<Coords> = setOf()) : 
         return result
     }
 
-    fun links(grid: Coords, at: Coords): List<Link> {
+    fun placement(grid: Coords, at: Coords): Placement {
         val xlate = Coords(at.x - first().x, at.y)
-        val first = map { it.translate(xlate) }.filter { it.x >= 0 && it.y >= 0 && it.x < grid.x && it.y < grid.y }
-        if (first.size < size) return listOf()
-        val result = mutableListOf<Link>()
-        for (newStart in first) {
-            result += listOf(newStart) + first.filter { it != newStart }
-        }
-        return result
+        return map { it.translate(xlate) }.filter { it.x >= 0 && it.y >= 0 && it.x < grid.x && it.y < grid.y }.toSet()
     }
 
-    fun links(grid: Coords): List<Link> {
+    fun placements(grid: Coords): Set<Placement> {
         return (0 until grid.x).flatMap { x ->
-            (0 until grid.y).flatMap { y ->
-                links(grid, Coords(x, y))
+            (0 until grid.y).map { y ->
+                placement(grid, Coords(x, y))
             }
-        }
+        }.filter { size == it.size }.toSet()
     }
 
     fun ascii() {

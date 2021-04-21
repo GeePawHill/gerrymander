@@ -1,5 +1,5 @@
 package org.geepawhill.gerrymander
 
-class Move(val links: Set<Link>, val collisions: Set<Link>) {
-    val examined = mutableSetOf<Link>()
+class Move(val links: Set<Placement>, val collisions: Set<Placement>) {
+    val examined = mutableSetOf<Placement>()
 }
