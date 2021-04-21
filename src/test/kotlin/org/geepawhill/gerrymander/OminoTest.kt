@@ -122,7 +122,7 @@ class OminoTest {
     }
 
     @Test
-    fun `all links for omino`() {
+    fun `all placements for omino`() {
         val actual = Omino(zeroZero, Coords(1, 0)).placements(Coords(2, 2))
         assertThat(actual).containsExactly(
             setOf(Coords(0, 0), Coords(1, 0)),
