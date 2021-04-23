@@ -4,6 +4,8 @@ class PlacementMap {
     val map = mutableMapOf<Coords, MutableSet<Placement>>()
     val size get() = map.size
 
+    fun clear() = map.clear()
+
     fun add(placement: Placement) {
         for (coords in placement) {
             val dest = map.getOrPut(coords) { mutableSetOf() }

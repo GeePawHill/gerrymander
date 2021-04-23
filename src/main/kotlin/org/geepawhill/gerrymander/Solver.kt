@@ -1,32 +1,46 @@
 package org.geepawhill.gerrymander
 
-import com.google.common.collect.ArrayListMultimap
-
 class Solver {
-
-    val cellToPlacement = ArrayListMultimap.create<Coords, Placement>()
-
-    fun solve(order: Int, size: Coords) {
-
-    }
-
     val moves = mutableListOf<Move>()
+    val map = PlacementMap()
+
     val examined = mutableSetOf<Placement>()
-    val links = mutableListOf<Placement>()
+
+    fun prepare(order: Int, width: Int, height: Int) {
+        if ((width * height) % order != 0) throw IllegalArgumentException("Order and width and height don't work.")
+        moves.clear()
+        examined.clear()
+        map.clear()
+        val size = Coords(width, height)
+        Omino.fixed(order).forEach { omino ->
+            omino.placements(size).forEach { placement ->
+                map.add(placement)
+            }
+        }
+    }
 
     fun backtrack() {
         if (moves.isEmpty()) return
-        val placement = moves.removeLast()
-        if (moves.isEmpty()) examined += placement.links
-        else moves.last().examined += placement.links
-        placement.examined.forEach { links += it }
-        placement.collisions.forEach { links += it }
+        val move = moves.removeLast()
+        for (placement in move.collisions) map.add(placement)
+        for (placement in move.examined) map.add(placement)
+        if (moves.isEmpty()) examined.add(move.placement)
+        else moves.last().examined.add(move.placement)
     }
 
-    fun backtrackIfNeeded(): Boolean {
-        while (links.isEmpty() && moves.isNotEmpty()) {
-            backtrack()
+    fun move(placement: Placement): Move {
+        map.remove(placement, mutableSetOf())
+        val collisions = mutableSetOf<Placement>()
+        val newlyEmptied = mutableSetOf<Coords>()
+        for (cell in placement) {
+            for (collision in map[cell]) {
+                map.remove(collision, newlyEmptied)
+                collisions += collision
+            }
         }
-        return links.isNotEmpty()
+        val result = Move(placement, collisions)
+        moves += result
+        return result
     }
+
 }
