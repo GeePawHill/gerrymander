@@ -1,6 +1,8 @@
 package org.geepawhill.gerrymander
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 
 class SolverTest {
@@ -47,10 +49,27 @@ class SolverTest {
     }
 
     @Test
-    fun `move adds Move with plac`() {
+    fun `move adds Move with placement`() {
         val move = solver.move(placements[0])
         assertThat(solver.moves.last()).isEqualTo(move)
-        assertThat(move.placement).isEqualTo(placements[0])
 
+    }
+
+    @Disabled
+    @Test
+    fun `one-answer solver test`() {
+        solver.prepare(2, 2, 1)
+        solver.step()
+        assertThat(solver.isSolved).isTrue()
+    }
+
+    @RepeatedTest(100)
+    fun `2x3 solver test`() {
+        solver.prepare(2, 2, 3)
+        while (!solver.isSolved) solver.step()
+        println()
+        solver.moves.forEach {
+            println(it.placement)
+        }
     }
 }
