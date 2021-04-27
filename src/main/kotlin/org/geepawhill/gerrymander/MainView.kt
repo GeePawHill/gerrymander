@@ -9,36 +9,54 @@ import tornadofx.*
 
 class MainView : View("Gerrymandering Game") {
 
+    val orderProperty = SimpleIntegerProperty(3)
+    val widthProperty = SimpleIntegerProperty(2)
+    val heightProperty = SimpleIntegerProperty(3)
     val countProperty = SimpleIntegerProperty(0)
-    val orderProperty = SimpleIntegerProperty(5)
+    val targetProperty = SimpleIntegerProperty(0)
 
     lateinit var ominos: FlowPane
     override val root = anchorpane {
-        tabpane {
+        background = Background(BackgroundFill(Color.DIMGRAY, CornerRadii.EMPTY, Insets(3.0)))
+        hgrow = Priority.ALWAYS
+        borderpane {
             anchorAll(this)
-            background = Background(BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets(3.0)))
-            hgrow = Priority.ALWAYS
-            tab("Ominoes") {
-                borderpane {
-                    left = form {
+            left = form {
+                fieldset("Layout") {
+                    field("Order") {
                         textfield(orderProperty)
-                        label(countProperty)
-                        button("Go") {
-                            action {
-                                updateOminos(orderProperty.value)
-                            }
-                        }
                     }
-                    center = anchorpane {
-                        flowpane {
-                            anchorAll(this)
-                            label("Ominos here")
-                            ominos = this
+                    field("Width") {
+                        textfield(widthProperty)
+                    }
+                    field("Height") {
+                        textfield(heightProperty)
+                    }
+                    field("Ominos") {
+                        label(countProperty)
+                    }
+                    field("Target") {
+                        label(targetProperty)
+                    }
+                    button("Go") {
+                        action {
+                            updateOminos(orderProperty.value)
                         }
                     }
                 }
             }
+            center = anchorpane {
+                flowpane {
+                    anchorAll(this)
+                    label("Ominos here")
+                    ominos = this
+                }
+            }
         }
+    }
+
+    init {
+        primaryStage.isMaximized = true
     }
 
     fun updateOminos(order: Int) {
@@ -54,7 +72,7 @@ class MainView : View("Gerrymandering Game") {
 
     fun FlowPane.makeOminoView(order: Int, omino: Omino) {
         pane {
-            paddingAll = 5.0
+            paddingAll = 25.0
             for (coords in omino) {
                 rectangle(coords.x * CELL_SIZE + 1, coords.y * CELL_SIZE + 1, CELL_SIZE - 2, CELL_SIZE - 2) {
                     fill = Color.BLUE
@@ -64,7 +82,7 @@ class MainView : View("Gerrymandering Game") {
     }
 
     companion object {
-        const val CELL_SIZE = 20.0
+        const val CELL_SIZE = 30.0
 
         fun anchorAll(node: Node) {
             AnchorPane.setBottomAnchor(node, 0.0)
