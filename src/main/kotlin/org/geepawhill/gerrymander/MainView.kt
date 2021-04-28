@@ -44,13 +44,16 @@ class MainView : View("Gerrymandering Game") {
                         }
                     }
                 }
+                scrollpane {
+                    flowpane {
+                        anchorAll(this)
+                        label("Ominos here")
+                        ominos = this
+                    }
+                }
             }
             center = anchorpane {
-                flowpane {
-                    anchorAll(this)
-                    label("Ominos here")
-                    ominos = this
-                }
+
             }
         }
     }
@@ -72,7 +75,7 @@ class MainView : View("Gerrymandering Game") {
 
     fun FlowPane.makeOminoView(order: Int, omino: Omino) {
         pane {
-            paddingAll = 25.0
+            paddingAll = 10.0
             for (coords in omino) {
                 rectangle(coords.x * CELL_SIZE + 1, coords.y * CELL_SIZE + 1, CELL_SIZE - 2, CELL_SIZE - 2) {
                     fill = Color.BLUE
@@ -82,7 +85,7 @@ class MainView : View("Gerrymandering Game") {
     }
 
     companion object {
-        const val CELL_SIZE = 30.0
+        const val CELL_SIZE = 20.0
 
         fun anchorAll(node: Node) {
             AnchorPane.setBottomAnchor(node, 0.0)
