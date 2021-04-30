@@ -1,14 +1,17 @@
 package org.geepawhill.gerrymander
 
 import javafx.beans.property.SimpleIntegerProperty
-import javafx.geometry.Insets
 import javafx.scene.Node
-import javafx.scene.layout.*
+import javafx.scene.control.Alert
+import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.FlowPane
+import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import tornadofx.*
 
 class MainView : View("Gerrymandering Game") {
 
+    val solver = Solver()
     val orderProperty = SimpleIntegerProperty(3)
     val widthProperty = SimpleIntegerProperty(2)
     val heightProperty = SimpleIntegerProperty(3)
@@ -16,8 +19,9 @@ class MainView : View("Gerrymandering Game") {
     val targetProperty = SimpleIntegerProperty(0)
 
     lateinit var ominos: FlowPane
+
     override val root = anchorpane {
-        background = Background(BackgroundFill(Color.DIMGRAY, CornerRadii.EMPTY, Insets(3.0)))
+//        background = Background(BackgroundFill(Color.DIMGRAY, CornerRadii.EMPTY, Insets(3.0)))
         hgrow = Priority.ALWAYS
         borderpane {
             anchorAll(this)
@@ -38,21 +42,20 @@ class MainView : View("Gerrymandering Game") {
                     field("Target") {
                         label(targetProperty)
                     }
-                    button("Go") {
+                    button("Layout") {
                         action {
-                            updateOminos(orderProperty.value)
+                            layout(orderProperty.value, widthProperty.value, heightProperty.value)
                         }
                     }
                 }
                 scrollpane {
                     flowpane {
                         anchorAll(this)
-                        label("Ominos here")
                         ominos = this
                     }
                 }
             }
-            center = anchorpane {
+            center = hbox {
 
             }
         }
@@ -60,6 +63,18 @@ class MainView : View("Gerrymandering Game") {
 
     init {
         primaryStage.isMaximized = true
+    }
+
+    fun layout(order: Int, width: Int, height: Int) {
+        if (((width * height) % order) != 0) {
+            alert(
+                Alert.AlertType.ERROR,
+                "Invalid Layout",
+                "The order ($order) doesn't partition the grid ($height X $width)"
+            )
+            return
+        }
+        updateOminos(orderProperty.value)
     }
 
     fun updateOminos(order: Int) {

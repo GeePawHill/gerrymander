@@ -1,8 +1,10 @@
 package org.geepawhill.gerrymander
 
+import tornadofx.*
+
 
 class Solver {
-    val moves = mutableListOf<Move>()
+    val moves = observableListOf<Move>()
     val map = PlacementMap()
     val newlyEmptied = mutableSetOf<Coords>()
 
