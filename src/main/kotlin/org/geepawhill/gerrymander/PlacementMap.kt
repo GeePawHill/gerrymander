@@ -10,6 +10,14 @@ class PlacementMap {
 
     fun clear() = map.clear()
 
+    fun copy(): PlacementMap {
+        val result = PlacementMap()
+        val placements = map.flatMap {
+            it.value
+        }.toSet().forEach { result.add(it) }
+        return result
+    }
+
     fun add(placement: Placement) {
         for (coords in placement) {
             val dest = map.getOrPut(coords) { mutableSetOf() }
@@ -24,8 +32,13 @@ class PlacementMap {
         return placements.elementAt(randoms.nextInt(placements.size))
     }
 
+    fun remove(cell: Coords) {
+        map.remove(cell)
+    }
+
     fun remove(placement: Placement, emptied: MutableSet<Coords>) {
         for (cell in placement) {
+            if (!map.containsKey(cell)) continue
             val set = this[cell]
             set.remove(placement)
             if (set.isEmpty()) {
@@ -33,6 +46,10 @@ class PlacementMap {
                 map.remove(cell)
             }
         }
+    }
+
+    fun least(): Placement {
+        return map.entries.sortedBy { it.value.size }.first().value.first()
     }
 
     operator fun get(coords: Coords): MutableSet<Placement> {

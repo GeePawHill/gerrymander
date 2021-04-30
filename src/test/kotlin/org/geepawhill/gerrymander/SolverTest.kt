@@ -52,7 +52,30 @@ class SolverTest {
     fun `move adds Move with placement`() {
         val move = solver.move(placements[0])
         assertThat(solver.moves.last()).isEqualTo(move)
+    }
 
+    @Test
+    fun `move notices newlyEmptied`() {
+        println(placements[0])
+        println(placements[2])
+        solver.map.add(placements[2])
+        solver.move(placements[0])
+        assertThat(solver.newlyEmptied).isNotEmpty()
+    }
+
+    @Test
+    fun `backtrack from first move does not ruin my life`() {
+        solver.prepare(3, 2, 3)
+        val clone = solver.map.copy()
+        val lshape = setOf(
+            Coords(0, 1), Coords(1, 0), Coords(1, 1)
+        )
+        solver.move(lshape)
+        solver.step()
+        assertThat(solver.examined).containsExactly(lshape)
+        clone.remove(lshape, mutableSetOf())
+        assertThat(solver.map.map).isEqualTo(clone.map)
+        assertThat(solver.newlyEmptied).isEmpty()
     }
 
     @Disabled
@@ -63,6 +86,7 @@ class SolverTest {
         assertThat(solver.isSolved).isTrue()
     }
 
+    @Disabled
     @RepeatedTest(100)
     fun `2x3 solver test`() {
         solver.prepare(2, 2, 3)

@@ -37,6 +37,10 @@ class Solver {
     fun backtrackBecauseOfNewlyEmptied(): Boolean {
         if (moves.isEmpty()) return false
         if (newlyEmptied.isEmpty()) return false
+        println("Newly Emptied: ")
+        newlyEmptied.forEach {
+            println("   $it")
+        }
         backtrack()
         return true
     }
@@ -53,12 +57,17 @@ class Solver {
     }
 
     fun move() {
-        val placement = pick()
-        move(placement)
+        if (moves.isEmpty()) move(pick())
+        else move(pickLeast())
     }
 
     fun pick(): Placement {
         val placement = map.random()
+        return placement
+    }
+
+    fun pickLeast(): Placement {
+        val placement = map.least()
         return placement
     }
 
@@ -73,22 +82,28 @@ class Solver {
         for (placement in move.examined) map.add(placement)
         if (moves.isEmpty()) examined.add(move.placement)
         else moves.last().examined.add(move.placement)
+        newlyEmptied.clear()
     }
 
     fun move(placement: Placement): Move {
+        // remove this placement from all cells
         map.remove(placement, mutableSetOf())
         val collisions = mutableSetOf<Placement>()
-        val newlyEmptied = mutableSetOf<Coords>()
         val toRemove = mutableSetOf<Placement>()
+        // find every placement that touches one of these cells
         for (cell in placement) {
             for (collision in map[cell]) {
                 toRemove += collision
             }
         }
+        // remove these cells
+        for (cell in placement) map.remove(cell)
+        // remove the collisions, notice if we empty a cell
         for (collision in toRemove) {
             map.remove(collision, newlyEmptied)
             collisions += collision
         }
+        println("Newly emptied: $newlyEmptied")
         val result = Move(placement, collisions)
         moves += result
         return result

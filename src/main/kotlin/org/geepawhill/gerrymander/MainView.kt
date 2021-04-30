@@ -151,9 +151,9 @@ class MainView : View("Gerrymandering Game") {
         const val CELL_SIZE = 20.0
         const val SOLUTION_SIZE = 40.0
         val COLORS = listOf(
-            Color.LAVENDER,
+            Color.BLUE,
             Color.RED,
-            Color.CHOCOLATE,
+            Color.YELLOW,
             Color.CORAL,
             Color.DARKSEAGREEN,
             Color.ORANGE
