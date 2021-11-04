@@ -49,7 +49,8 @@ class PlacementMap {
     }
 
     fun least(): Placement {
-        return map.entries.sortedBy { it.value.size }.first().value.first()
+        val fewestPlacements = map.entries.sortedBy { it.value.size }.first().value
+        return fewestPlacements.elementAt(randoms.nextInt(fewestPlacements.size))
     }
 
     operator fun get(coords: Coords): MutableSet<Placement> {

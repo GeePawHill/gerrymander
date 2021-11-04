@@ -18,7 +18,7 @@ class MainView : View("Gerrymandering Game") {
     val solver = Solver()
     val orderProperty = SimpleIntegerProperty(5)
     val widthProperty = SimpleIntegerProperty(5)
-    val heightProperty = SimpleIntegerProperty(6)
+    val heightProperty = SimpleIntegerProperty(4)
     val countProperty = SimpleIntegerProperty(0)
     val targetProperty = SimpleIntegerProperty(0)
     val solutionMap = mutableMapOf<Coords, Rectangle>()
