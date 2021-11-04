@@ -1,11 +1,12 @@
 package org.geepawhill.gerrymander
 
 import tornadofx.*
+import kotlin.random.Random
 
 
-class Solver {
+class Solver(val randoms: Random) {
     val moves = observableListOf<Move>()
-    val map = PlacementMap()
+    val map = PlacementMap(randoms)
     val newlyEmptied = mutableSetOf<Coords>()
 
     val examined = mutableSetOf<Placement>()
@@ -45,16 +46,17 @@ class Solver {
         return true
     }
 
+    fun backtrackBecauseNoPlacements(): Boolean {
+        if (map.size > 0) return false
+        backtrack()
+        return true
+    }
+
     fun solved(): Boolean {
         if (moves.size < target) return false
         return true
     }
 
-    fun backtrackBecauseNoPlacements(): Boolean {
-        if (map.size != 0) return false
-        while (map.size == 0) backtrack()
-        return true
-    }
 
     fun move() {
         if (moves.isEmpty()) move(pick())

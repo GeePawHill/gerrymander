@@ -15,7 +15,7 @@ import kotlin.random.Random
 
 class MainView : View("Gerrymandering Game") {
 
-    val solver = Solver()
+    val solver = Solver(Random.Default)
     val orderProperty = SimpleIntegerProperty(5)
     val widthProperty = SimpleIntegerProperty(5)
     val heightProperty = SimpleIntegerProperty(4)

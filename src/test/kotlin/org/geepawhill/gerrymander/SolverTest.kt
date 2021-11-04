@@ -4,10 +4,11 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
+import kotlin.random.Random
 
 class SolverTest {
     val size = Coords(2, 2)
-    val solver = Solver()
+    val solver = Solver(Random.Default)
 
     val placements = Omino.fixed(2).flatMap { it.placements(size) }
 
@@ -17,6 +18,13 @@ class SolverTest {
         solver.moves += placement
         solver.backtrack()
         assertThat(solver.map[placements[0].first()]).contains(placements[0])
+    }
+
+    @Disabled
+    @Test
+    fun `bulk test`() {
+        val runner = BulkRun()
+        runner.run(10000)
     }
 
     @Test
@@ -79,7 +87,7 @@ class SolverTest {
     }
 
     @Test
-    fun `double backtrack recognized`() {
+    fun `backtrack notices when it leaves a newly-emptied cell`() {
         solver.prepare(2, 8, 1)
         val sideways = Omino(Coords(0, 0), Coords(1, 0))
         val center = sideways.placement(Coords(8, 1), Coords(3, 0))

@@ -2,9 +2,10 @@ package org.geepawhill.gerrymander
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import kotlin.random.Random
 
 class PlacementMapTest {
-    private val map = PlacementMap()
+    private val map = PlacementMap(Random.Default)
     private val one = Omino(Coords(0, 0)).placement(Coords(5, 5), Coords(2, 2))
     private val two = Omino(Coords(0, 0), Coords(1, 0)).placement(Coords(5, 5), Coords(2, 2))
 

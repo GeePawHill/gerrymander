@@ -1,17 +1,16 @@
 package org.geepawhill.gerrymander
 
-import java.util.*
+import kotlin.random.Random
 
 
-class PlacementMap {
+class PlacementMap(val randoms: Random) {
     val map = mutableMapOf<Coords, MutableSet<Placement>>()
-    val randoms = Random()
     val size get() = map.size
 
     fun clear() = map.clear()
 
     fun copy(): PlacementMap {
-        val result = PlacementMap()
+        val result = PlacementMap(Random.Default)
         val placements = map.flatMap {
             it.value
         }.toSet().forEach { result.add(it) }
