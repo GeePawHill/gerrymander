@@ -11,6 +11,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import tornadofx.*
+import kotlin.random.Random
 
 class MainView : View("Gerrymandering Game") {
 
@@ -78,7 +79,7 @@ class MainView : View("Gerrymandering Game") {
                             solver.moves.withIndex().forEach {
                                 for (coords in it.value.placement) {
                                     with(solutionMap[coords]!!) {
-                                        fill = COLORS[it.index]
+                                        fill = colors[it.index]
                                     }
                                 }
                             }
@@ -94,6 +95,7 @@ class MainView : View("Gerrymandering Game") {
     }
 
     fun layout(order: Int, width: Int, height: Int) {
+        val districts = (width * height) / order
         if (((width * height) % order) != 0) {
             alert(
                 Alert.AlertType.ERROR,
@@ -102,9 +104,22 @@ class MainView : View("Gerrymandering Game") {
             )
             return
         }
+        adjustColors(districts)
         updateOminos(orderProperty.value)
         solver.prepare(order, width, height)
         updateGrid(width, height)
+    }
+
+    fun adjustColors(districts: Int) {
+        while (colors.size < districts) {
+            val color = Color(
+                Random.nextDouble(),
+                Random.nextDouble(),
+                Random.nextDouble(),
+                1.0
+            )
+            colors += color
+        }
     }
 
     fun updateGrid(width: Int, height: Int) {
@@ -150,7 +165,7 @@ class MainView : View("Gerrymandering Game") {
     companion object {
         const val CELL_SIZE = 20.0
         const val SOLUTION_SIZE = 40.0
-        val COLORS = listOf(
+        val colors = mutableListOf(
             Color.BLUE,
             Color.RED,
             Color.YELLOW,
