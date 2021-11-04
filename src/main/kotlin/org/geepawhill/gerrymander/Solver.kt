@@ -26,6 +26,7 @@ class Solver(val randoms: Random) {
                 map.add(placement)
             }
         }
+        map.dump()
     }
 
     fun step() {

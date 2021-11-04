@@ -10,6 +10,7 @@ class BulkRun {
         while (soFar++ < count) {
             val solver = Solver(Random(soFar))
             solver.prepare(5, 5, 5)
+            solver.map.dump()
             var limit = 100
             var step = 0
             while (!solver.isSolved && step < limit) {

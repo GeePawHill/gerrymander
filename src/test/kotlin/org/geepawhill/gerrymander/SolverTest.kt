@@ -44,6 +44,13 @@ class SolverTest {
         assertThat(solver.examined).contains(placements[0])
     }
 
+    @Disabled
+    @Test
+    fun `link counts`() {
+        val solver = Solver(Random.Default)
+        solver.prepare(5, 10, 10)
+    }
+
     @Test
     fun `backtrack on n-item stack puts examined in previous`() {
         val arbitrary = Move(emptySet(), emptySet())
