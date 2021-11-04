@@ -4,12 +4,11 @@ import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Alert
-import javafx.scene.layout.AnchorPane
-import javafx.scene.layout.FlowPane
-import javafx.scene.layout.Priority
-import javafx.scene.layout.VBox
+import javafx.scene.control.Label
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
+import javafx.scene.text.Font
 import tornadofx.*
 import kotlin.random.Random
 
@@ -21,7 +20,7 @@ class MainView : View("Gerrymandering Game") {
     val heightProperty = SimpleIntegerProperty(4)
     val countProperty = SimpleIntegerProperty(0)
     val targetProperty = SimpleIntegerProperty(0)
-    val solutionMap = mutableMapOf<Coords, Rectangle>()
+    val solutionMap = mutableMapOf<Coords, StackPane>()
 
     lateinit var ominos: FlowPane
     lateinit var solution: VBox
@@ -71,15 +70,25 @@ class MainView : View("Gerrymandering Game") {
                         action {
                             solver.step()
                             for (entry in solutionMap) {
-                                with(entry.value) {
+                                with(entry.value.children.first() as Rectangle) {
                                     fill = Color.DARKGRAY
+                                }
+                                with(entry.value.children.last() as Label) {
+                                    textFill = Color.WHITE
+                                    text = ""
+                                    font = Font.font(20.0)
                                 }
                             }
 
                             solver.moves.withIndex().forEach {
                                 for (coords in it.value.placement) {
                                     with(solutionMap[coords]!!) {
-                                        fill = colors[it.index]
+                                        with(children.first() as Rectangle) {
+                                            fill = colors[it.index]
+                                        }
+                                        with(children.last() as Label) {
+                                            text = it.index.toString()
+                                        }
                                     }
                                 }
                             }
@@ -129,10 +138,18 @@ class MainView : View("Gerrymandering Game") {
             for (row in 0 until height) {
                 hbox {
                     for (column in 0 until width) {
-                        rectangle(SOLUTION_SIZE * column, SOLUTION_SIZE * row, SOLUTION_SIZE - 2, SOLUTION_SIZE - 2) {
+                        stackpane {
                             solutionMap[Coords(column, row)] = this
-                            fill = Color.DARKGRAY
-                            stroke = Color.WHITE
+                            rectangle(
+                                SOLUTION_SIZE * column,
+                                SOLUTION_SIZE * row,
+                                SOLUTION_SIZE - 2,
+                                SOLUTION_SIZE - 2
+                            ) {
+                                fill = Color.DARKGRAY
+                                stroke = Color.WHITE
+                            }
+                            label("")
                         }
                     }
                 }
