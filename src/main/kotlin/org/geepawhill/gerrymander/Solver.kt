@@ -83,6 +83,9 @@ class Solver {
         if (moves.isEmpty()) examined.add(move.placement)
         else moves.last().examined.add(move.placement)
         newlyEmptied.clear()
+        for (cell in move.placement) {
+            if (map[cell].isEmpty()) newlyEmptied += cell
+        }
     }
 
     fun move(placement: Placement): Move {

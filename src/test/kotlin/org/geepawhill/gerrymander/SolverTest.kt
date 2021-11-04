@@ -78,6 +78,19 @@ class SolverTest {
         assertThat(solver.newlyEmptied).isEmpty()
     }
 
+    @Test
+    fun `double backtrack recognized`() {
+        solver.prepare(2, 8, 1)
+        val sideways = Omino(Coords(0, 0), Coords(1, 0))
+        val center = sideways.placement(Coords(8, 1), Coords(3, 0))
+        val left = sideways.placement(Coords(8, 1), Coords(0, 0))
+        solver.move(center)
+        solver.move(left)
+        solver.step()
+        solver.step()
+        assertThat(solver.moves).isEmpty()
+    }
+
     @Disabled
     @Test
     fun `one-answer solver test`() {
