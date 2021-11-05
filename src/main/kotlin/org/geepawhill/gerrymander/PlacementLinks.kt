@@ -3,7 +3,7 @@ package org.geepawhill.gerrymander
 import kotlin.random.Random
 
 
-class PlacementMap(val randoms: Random) {
+class PlacementLinks(val randoms: Random) {
     val map = mutableMapOf<Coords, MutableSet<Placement>>()
     val size get() = map.size
 
@@ -14,9 +14,9 @@ class PlacementMap(val randoms: Random) {
 
     fun clear() = map.clear()
 
-    fun copy(): PlacementMap {
-        val result = PlacementMap(Random.Default)
-        val placements = map.flatMap {
+    fun copy(): PlacementLinks {
+        val result = PlacementLinks(Random.Default)
+        map.flatMap {
             it.value
         }.toSet().forEach { result.add(it) }
         return result

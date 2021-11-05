@@ -17,7 +17,7 @@ class SolverTest {
         val placement = Move(emptySet(), setOf(placements[0]))
         solver.moves += placement
         solver.backtrack()
-        assertThat(solver.map[placements[0].first()]).contains(placements[0])
+        assertThat(solver.links[placements[0].first()]).contains(placements[0])
     }
 
     @Test
@@ -32,7 +32,7 @@ class SolverTest {
         move.examined += placements[0]
         solver.moves += move
         solver.backtrack()
-        assertThat(solver.map[placements[0].first()]).contains(placements[0])
+        assertThat(solver.links[placements[0].first()]).contains(placements[0])
     }
 
     @Test
@@ -70,15 +70,15 @@ class SolverTest {
 
     @Test
     fun `move notices newlyEmptied`() {
-        solver.map.add(placements[2])
+        solver.links.add(placements[2])
         solver.move(placements[0])
-        assertThat(solver.newlyEmptied).isNotEmpty()
+        assertThat(solver.orphanedCoordinates).isNotEmpty()
     }
 
     @Test
     fun `backtrack from first move does not ruin my life`() {
         solver.prepare(3, 2, 3)
-        val clone = solver.map.copy()
+        val clone = solver.links.copy()
         val lshape = setOf(
             Coords(0, 1), Coords(1, 0), Coords(1, 1)
         )
@@ -86,8 +86,8 @@ class SolverTest {
         solver.step()
         assertThat(solver.examined).containsExactly(lshape)
         clone.remove(lshape, mutableSetOf())
-        assertThat(solver.map.map).isEqualTo(clone.map)
-        assertThat(solver.newlyEmptied).isEmpty()
+        assertThat(solver.links.map).isEqualTo(clone.map)
+        assertThat(solver.orphanedCoordinates).isEmpty()
     }
 
     @Test
