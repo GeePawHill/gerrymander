@@ -47,43 +47,48 @@ class Solver(val randoms: Random) {
     fun backtrack() {
         if (moves.isEmpty()) return
         val move = moves.removeLast()
-        for (placement in move.collisions) links.add(placement)
-        for (placement in move.examined) links.add(placement)
-        if (moves.isEmpty()) examined.add(move.placement)
-        else moves.last().examined.add(move.placement)
+        restoreExcludedPlacements(move)
+        addPlacementToPreviousExamined(move)
+        resetOrphanedCoordinates(move)
+    }
+
+    private fun resetOrphanedCoordinates(move: Move) {
         orphanedCoordinates.clear()
         for (cell in move.placement) {
             if (links[cell].isEmpty()) orphanedCoordinates += cell
         }
     }
 
+    private fun addPlacementToPreviousExamined(move: Move) {
+        if (moves.isEmpty()) examined.add(move.placement)
+        else moves.last().examined.add(move.placement)
+    }
+
+    private fun restoreExcludedPlacements(move: Move) {
+        for (placement in move.collisions) links.add(placement)
+        for (placement in move.examined) links.add(placement)
+    }
+
     fun move(placement: Placement): Move {
-        // remove this placement from all cells
-        // Ignore orphans
         links.remove(placement)
-        val toRemove = findCollisions(placement)
-        val collisions = mutableSetOf<Placement>()
-        // remove these cells
+        val collisions = findCollisions(placement)
         for (cell in placement) links.remove(cell)
-        // remove the collisions, notice if we empty a cell
-        for (collision in toRemove) {
-            orphanedCoordinates += links.remove(collision)
-            collisions += collision
+        collisions.forEach {
+            orphanedCoordinates += links.remove(it)
         }
         val result = Move(placement, collisions)
         moves += result
         return result
     }
 
-    private fun findCollisions(placement: Placement): MutableSet<Placement> {
-        val toRemove = mutableSetOf<Placement>()
-        // find every placement that touches one of these cells
+    private fun findCollisions(placement: Placement): Set<Placement> {
+        val collisions = mutableSetOf<Placement>()
         for (cell in placement) {
             for (collision in links[cell]) {
-                toRemove += collision
+                collisions += collision
             }
         }
-        return toRemove
+        return collisions
     }
 
 }
