@@ -10,6 +10,7 @@ class Solver(val randoms: Random) {
 
     val examined = mutableSetOf<Placement>()
     val isSolved get() = moves.size == target
+    val needsBacktrack get() = orphanedCoordinates.isNotEmpty()
 
     var target = Int.MAX_VALUE
 
@@ -29,12 +30,10 @@ class Solver(val randoms: Random) {
     }
 
     fun step() {
-        if (needsBacktrack()) backtrack()
+        if (needsBacktrack) backtrack()
         else if (isSolved) return
         else move()
     }
-
-    fun needsBacktrack(): Boolean = orphanedCoordinates.isNotEmpty()
 
     fun move() {
         if (moves.isEmpty()) move(pick())
@@ -60,8 +59,23 @@ class Solver(val randoms: Random) {
 
     fun move(placement: Placement): Move {
         // remove this placement from all cells
-        links.remove(placement, mutableSetOf())
+        // Ignore orphans
+        links.remove(placement)
+        val toRemove = findCollisions(placement)
         val collisions = mutableSetOf<Placement>()
+        // remove these cells
+        for (cell in placement) links.remove(cell)
+        // remove the collisions, notice if we empty a cell
+        for (collision in toRemove) {
+            orphanedCoordinates += links.remove(collision)
+            collisions += collision
+        }
+        val result = Move(placement, collisions)
+        moves += result
+        return result
+    }
+
+    private fun findCollisions(placement: Placement): MutableSet<Placement> {
         val toRemove = mutableSetOf<Placement>()
         // find every placement that touches one of these cells
         for (cell in placement) {
@@ -69,16 +83,7 @@ class Solver(val randoms: Random) {
                 toRemove += collision
             }
         }
-        // remove these cells
-        for (cell in placement) links.remove(cell)
-        // remove the collisions, notice if we empty a cell
-        for (collision in toRemove) {
-            links.remove(collision, orphanedCoordinates)
-            collisions += collision
-        }
-        val result = Move(placement, collisions)
-        moves += result
-        return result
+        return toRemove
     }
 
 }

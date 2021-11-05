@@ -30,18 +30,16 @@ class PlacementLinksTest {
 
     @Test
     fun `remove removes & remembers cleared cells`() {
-        val emptied = mutableSetOf<Coords>()
         map.add(one)
-        map.remove(one, emptied)
+        val emptied = map.remove(one)
         assertThat(emptied).contains(one.first())
     }
 
     @Test
     fun `remove removes & does not remember non-emptied cells`() {
-        val emptied = mutableSetOf<Coords>()
         map.add(one)
         map.add(two)
-        map.remove(one, emptied)
+        val emptied = map.remove(one)
         assertThat(emptied).isEmpty()
         assertThat(map[one.first()]).contains(two)
     }

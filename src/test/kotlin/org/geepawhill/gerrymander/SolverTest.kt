@@ -85,7 +85,7 @@ class SolverTest {
         solver.move(lshape)
         solver.step()
         assertThat(solver.examined).containsExactly(lshape)
-        clone.remove(lshape, mutableSetOf())
+        clone.remove(lshape)
         assertThat(solver.links.map).isEqualTo(clone.map)
         assertThat(solver.orphanedCoordinates).isEmpty()
     }

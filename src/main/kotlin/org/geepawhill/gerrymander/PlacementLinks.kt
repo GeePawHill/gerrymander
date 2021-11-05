@@ -40,16 +40,18 @@ class PlacementLinks(val randoms: Random) {
         map.remove(cell)
     }
 
-    fun remove(placement: Placement, emptied: MutableSet<Coords>) {
+    fun remove(placement: Placement): Set<Coords> {
+        val orphanedCoordinates = mutableSetOf<Coords>()
         for (cell in placement) {
             if (!map.containsKey(cell)) continue
             val set = this[cell]
             set.remove(placement)
             if (set.isEmpty()) {
-                emptied += cell
+                orphanedCoordinates += cell
                 map.remove(cell)
             }
         }
+        return orphanedCoordinates
     }
 
     fun least(): Placement {
