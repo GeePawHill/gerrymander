@@ -39,10 +39,6 @@ class Solver(val randoms: Random) {
     fun backtrackBecauseOfNewlyEmptied(): Boolean {
         if (moves.isEmpty()) return false
         if (newlyEmptied.isEmpty()) return false
-        println("Newly Emptied: ")
-        newlyEmptied.forEach {
-            println("   $it")
-        }
         backtrack()
         return true
     }
@@ -76,10 +72,6 @@ class Solver(val randoms: Random) {
 
     fun backtrack() {
         if (moves.isEmpty()) return
-        println("backtrack")
-        for (move in moves) {
-            println(move.placement)
-        }
         val move = moves.removeLast()
         for (placement in move.collisions) map.add(placement)
         for (placement in move.examined) map.add(placement)
@@ -109,7 +101,6 @@ class Solver(val randoms: Random) {
             map.remove(collision, newlyEmptied)
             collisions += collision
         }
-        println("Newly emptied: $newlyEmptied")
         val result = Move(placement, collisions)
         moves += result
         return result

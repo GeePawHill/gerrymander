@@ -78,7 +78,6 @@ class OminoTest {
     fun `fixed generates correct sizes`() {
         assertThat(Omino.fixed(1).size).isEqualTo(1)
         assertThat(Omino.fixed(2).size).isEqualTo(2)
-        Omino.fixed(3).forEach { it.ascii() }
         assertThat(Omino.fixed(3).size).isEqualTo(6)
     }
 

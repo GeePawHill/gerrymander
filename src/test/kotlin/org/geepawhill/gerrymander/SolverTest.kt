@@ -71,8 +71,6 @@ class SolverTest {
 
     @Test
     fun `move notices newlyEmptied`() {
-        println(placements[0])
-        println(placements[2])
         solver.map.add(placements[2])
         solver.move(placements[0])
         assertThat(solver.newlyEmptied).isNotEmpty()
@@ -119,9 +117,5 @@ class SolverTest {
     fun `2x3 solver test`() {
         solver.prepare(2, 2, 3)
         while (!solver.isSolved) solver.step()
-        println()
-        solver.moves.forEach {
-            println(it.placement)
-        }
     }
 }

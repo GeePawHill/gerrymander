@@ -28,17 +28,6 @@ data class Omino private constructor(private val base: Set<Coords> = setOf()) : 
         }.filter { size == it.size }.toSet()
     }
 
-    fun ascii() {
-        println()
-        for (x in 0 until size) {
-            for (y in 0 until size) {
-                if (contains(Coords(x, y))) print("*")
-                else print(" ")
-            }
-            println()
-        }
-    }
-
     companion object {
         operator fun invoke(): Omino {
             return Omino()
