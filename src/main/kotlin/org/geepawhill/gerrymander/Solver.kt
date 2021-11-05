@@ -3,7 +3,6 @@ package org.geepawhill.gerrymander
 import tornadofx.*
 import kotlin.random.Random
 
-
 class Solver(val randoms: Random) {
     val moves = observableListOf<Move>()
     val map = PlacementMap(randoms)
@@ -30,45 +29,23 @@ class Solver(val randoms: Random) {
     }
 
     fun step() {
-        if (backtrackBecauseOfNewlyEmptied()) return
-        if (solved()) return
-        if (backtrackBecauseNoPlacements()) return
-        move()
+        if (needsBacktrack()) backtrack()
+        else if (solved()) return
+        else move()
     }
 
-    fun backtrackBecauseOfNewlyEmptied(): Boolean {
-        if (moves.isEmpty()) return false
-        if (newlyEmptied.isEmpty()) return false
-        backtrack()
-        return true
-    }
+    fun needsBacktrack(): Boolean = newlyEmptied.isNotEmpty()
 
-    fun backtrackBecauseNoPlacements(): Boolean {
-        if (map.size > 0) return false
-        backtrack()
-        return true
-    }
-
-    fun solved(): Boolean {
-        if (moves.size < target) return false
-        return true
-    }
-
+    fun solved(): Boolean = moves.size == target
 
     fun move() {
         if (moves.isEmpty()) move(pick())
         else move(pickLeast())
     }
 
-    fun pick(): Placement {
-        val placement = map.random()
-        return placement
-    }
+    fun pick(): Placement = map.random()
 
-    fun pickLeast(): Placement {
-        val placement = map.least()
-        return placement
-    }
+    fun pickLeast(): Placement = map.least()
 
     fun backtrack() {
         if (moves.isEmpty()) return

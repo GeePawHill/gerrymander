@@ -20,7 +20,6 @@ class SolverTest {
         assertThat(solver.map[placements[0].first()]).contains(placements[0])
     }
 
-    @Disabled
     @Test
     fun `bulk test`() {
         val runner = BulkRun()
@@ -104,7 +103,6 @@ class SolverTest {
         assertThat(solver.moves).isEmpty()
     }
 
-    @Disabled
     @Test
     fun `one-answer solver test`() {
         solver.prepare(2, 2, 1)
@@ -112,7 +110,6 @@ class SolverTest {
         assertThat(solver.isSolved).isTrue()
     }
 
-    @Disabled
     @RepeatedTest(100)
     fun `2x3 solver test`() {
         solver.prepare(2, 2, 3)
