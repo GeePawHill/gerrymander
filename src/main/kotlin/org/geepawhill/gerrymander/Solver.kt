@@ -14,6 +14,12 @@ class Solver(val randoms: Random) {
 
     var target = Int.MAX_VALUE
 
+    fun run(order: Int, width: Int, height: Int): List<Move> {
+        prepare(order, width, height)
+        while (!isSolved) step()
+        return moves
+    }
+
     fun prepare(order: Int, width: Int, height: Int) {
         if ((width * height) % order != 0) throw IllegalArgumentException("Order and width and height don't work.")
         target = (width * height) / order
@@ -48,7 +54,7 @@ class Solver(val randoms: Random) {
         if (moves.isEmpty()) return
         val move = moves.removeLast()
         restoreExcludedPlacements(move)
-        addPlacementToPreviousExamined(move)
+        addPlacementToExamined(move)
         resetOrphanedCoordinates(move)
     }
 
@@ -59,7 +65,7 @@ class Solver(val randoms: Random) {
         }
     }
 
-    private fun addPlacementToPreviousExamined(move: Move) {
+    private fun addPlacementToExamined(move: Move) {
         if (moves.isEmpty()) examined.add(move.placement)
         else moves.last().examined.add(move.placement)
     }
