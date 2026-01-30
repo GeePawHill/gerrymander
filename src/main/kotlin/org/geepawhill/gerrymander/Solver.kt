@@ -16,7 +16,9 @@ class Solver(val randoms: Random) {
 
     fun run(order: Int, width: Int, height: Int): List<Move> {
         prepare(order, width, height)
-        while (!isSolved) step()
+        var limit = 100
+        while (limit-- > 0 && !isSolved) step()
+        if (limit == 0) throw Exception("Failed to solve a problem!")
         return moves
     }
 
