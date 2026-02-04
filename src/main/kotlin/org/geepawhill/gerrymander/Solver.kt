@@ -9,7 +9,7 @@ class Solver(val randoms: Random) {
     val orphanedCoordinates = mutableSetOf<Coords>()
 
     val examined = mutableSetOf<Placement>()
-    val isSolved get() = moves.size == target
+    val isSolved get() = links.size==0 && orphanedCoordinates.isEmpty()
     val needsBacktrack get() = orphanedCoordinates.isNotEmpty()
 
     var target = Int.MAX_VALUE
@@ -23,8 +23,6 @@ class Solver(val randoms: Random) {
     }
 
     fun prepare(order: Int, width: Int, height: Int) {
-        if ((width * height) % order != 0) throw IllegalArgumentException("Order and width and height don't work.")
-        target = (width * height) / order
         moves.clear()
         examined.clear()
         links.clear()
