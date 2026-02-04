@@ -15,9 +15,9 @@ import kotlin.random.Random
 class MainView : View("Gerrymandering Game") {
 
     val solver = Solver(Random.Default)
-    val orderProperty = SimpleIntegerProperty(5)
-    val widthProperty = SimpleIntegerProperty(5)
-    val heightProperty = SimpleIntegerProperty(4)
+    val orderProperty = SimpleIntegerProperty(6)
+    val widthProperty = SimpleIntegerProperty(32)
+    val heightProperty = SimpleIntegerProperty(18)
     val countProperty = SimpleIntegerProperty(0)
     val targetProperty = SimpleIntegerProperty(0)
     val solutionMap = mutableMapOf<Coords, StackPane>()
@@ -64,8 +64,40 @@ class MainView : View("Gerrymandering Game") {
                 vbox {
                     solution = this
                 }
-                stackpane {
+                hbox {
                     alignment = Pos.CENTER
+                    button("Run") {
+                        action {
+                            layout(orderProperty.value, widthProperty.value, heightProperty.value)
+                            solver.run(orderProperty.value,
+                                widthProperty.value,
+                                heightProperty.value)
+                            for (entry in solutionMap) {
+                                with(entry.value.children.first() as Rectangle) {
+                                    fill = Color.DARKGRAY
+                                }
+                                with(entry.value.children.last() as Label) {
+                                    textFill = Color.WHITE
+                                    text = ""
+                                    font = Font.font(20.0)
+                                }
+                            }
+
+                            solver.moves.withIndex().forEach {
+                                for (coords in it.value.placement) {
+                                    with(solutionMap[coords]!!) {
+                                        with(children.first() as Rectangle) {
+                                            fill = colors[it.index]
+                                        }
+                                        with(children.last() as Label) {
+                                            text = it.index.toString()
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
                     button("Step") {
                         action {
                             solver.step()
