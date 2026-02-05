@@ -1,9 +1,9 @@
 package org.geepawhill.gerrymander
 
 import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
 import javafx.scene.Node
-import javafx.scene.control.Alert
 import javafx.scene.control.Label
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
@@ -15,12 +15,15 @@ import kotlin.random.Random
 class MainView : View("Gerrymandering Game") {
 
     val solver = Solver(Random(0))
-    val orderProperty = SimpleIntegerProperty(6)
-    val widthProperty = SimpleIntegerProperty(32)
-    val heightProperty = SimpleIntegerProperty(18)
+    val orderProperty = SimpleIntegerProperty(2)
+    val widthProperty = SimpleIntegerProperty(3)
+    val heightProperty = SimpleIntegerProperty(1)
     val countProperty = SimpleIntegerProperty(0)
     val targetProperty = SimpleIntegerProperty(0)
     val solutionMap = mutableMapOf<Coords, StackPane>()
+
+    val solvedProperty = SimpleStringProperty("")
+    val stepCountProperty = SimpleIntegerProperty(0)
 
     lateinit var ominos: FlowPane
     lateinit var solution: VBox
@@ -65,13 +68,21 @@ class MainView : View("Gerrymandering Game") {
                     solution = this
                 }
                 hbox {
+                    label(solvedProperty)
+                    label(stepCountProperty)
                     alignment = Pos.CENTER
                     button("Run") {
                         action {
                             layout(orderProperty.value, widthProperty.value, heightProperty.value)
-                            solver.run(orderProperty.value,
+                            solver.run(
+                                orderProperty.value,
                                 widthProperty.value,
-                                heightProperty.value)
+                                heightProperty.value
+                            )
+                            stepCountProperty.value = solver.stepCount
+                            if (solver.isSolved) solvedProperty.value = "Solved it!"
+                            else solvedProperty.value = "Insoluble"
+
                             for (entry in solutionMap) {
                                 with(entry.value.children.first() as Rectangle) {
                                     fill = Color.DARKGRAY
@@ -137,14 +148,14 @@ class MainView : View("Gerrymandering Game") {
 
     fun layout(order: Int, width: Int, height: Int) {
         val districts = (width * height) / order
-        if (((width * height) % order) != 0) {
-            alert(
-                Alert.AlertType.ERROR,
-                "Invalid Layout",
-                "The order ($order) doesn't partition the grid ($height X $width)"
-            )
-            return
-        }
+//        if (((width * height) % order) != 0) {
+//            alert(
+//                Alert.AlertType.ERROR,
+//                "Invalid Layout",
+//                "The order ($order) doesn't partition the grid ($height X $width)"
+//            )
+//            return
+//        }
         adjustColors(districts)
         updateOminos(orderProperty.value)
         solver.prepare(order, width, height)

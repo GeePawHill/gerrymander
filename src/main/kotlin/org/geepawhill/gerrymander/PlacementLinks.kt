@@ -55,6 +55,7 @@ class PlacementLinks(val randoms: Random) {
     }
 
     fun least(): Placement {
+        println(map.size)
         val fewestPlacements = map.entries.sortedBy { it.value.size }.first().value
         return fewestPlacements.elementAt(randoms.nextInt(fewestPlacements.size))
     }

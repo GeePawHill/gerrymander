@@ -4,20 +4,26 @@ import tornadofx.*
 import kotlin.random.Random
 
 class Solver(val randoms: Random) {
+    var stepCount = 0
     val moves = observableListOf<Move>()
     val links = PlacementLinks(randoms)
     val orphanedCoordinates = mutableSetOf<Coords>()
 
     val examined = mutableSetOf<Placement>()
-    val isSolved get() = links.size==0 && orphanedCoordinates.isEmpty()
+    val isSolved get() = links.size == 0 && orphanedCoordinates.isEmpty()
+    val isInsoluble get() = links.size == 0 && needsBacktrack
     val needsBacktrack get() = orphanedCoordinates.isNotEmpty()
 
     var target = Int.MAX_VALUE
 
     fun run(order: Int, width: Int, height: Int): List<Move> {
+        stepCount = 0
         prepare(order, width, height)
-        var limit = 1000
-        while (limit-- > 0 && !isSolved) step()
+        var limit = 100000
+        while (limit-- > 0 && !isSolved) {
+            step()
+            stepCount++
+        }
         if (limit == 0) throw Exception("Failed to solve a problem!")
         return moves
     }
@@ -36,14 +42,13 @@ class Solver(val randoms: Random) {
     }
 
     fun step() {
+        if (isSolved) return
         if (needsBacktrack) backtrack()
-        else if (isSolved) return
         else move()
     }
 
     fun move() {
-        if (moves.isEmpty()) move(pick())
-        else move(pickLeast())
+        move(pickLeast())
     }
 
     fun pick(): Placement = links.random()
