@@ -15,9 +15,9 @@ import kotlin.random.Random
 class MainView : View("Gerrymandering Game") {
 
     val solver = Solver(Random(0))
-    val orderProperty = SimpleIntegerProperty(2)
-    val widthProperty = SimpleIntegerProperty(3)
-    val heightProperty = SimpleIntegerProperty(1)
+    val orderProperty = SimpleIntegerProperty(6)
+    val widthProperty = SimpleIntegerProperty(32)
+    val heightProperty = SimpleIntegerProperty(18)
     val countProperty = SimpleIntegerProperty(0)
     val targetProperty = SimpleIntegerProperty(0)
     val solutionMap = mutableMapOf<Coords, StackPane>()

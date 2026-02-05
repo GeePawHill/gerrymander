@@ -19,12 +19,10 @@ class Solver(val randoms: Random) {
     fun run(order: Int, width: Int, height: Int): List<Move> {
         stepCount = 0
         prepare(order, width, height)
-        var limit = 100000
-        while (limit-- > 0 && !isSolved) {
+        while (!isSolved) {
             step()
             stepCount++
         }
-        if (limit == 0) throw Exception("Failed to solve a problem!")
         return moves
     }
 
@@ -61,6 +59,9 @@ class Solver(val randoms: Random) {
         restoreExcludedPlacements(move)
         addPlacementToExamined(move)
         resetOrphanedCoordinates(move)
+        if (orphanedCoordinates.isNotEmpty() && moves.isEmpty()) {
+            throw RuntimeException("Whatever.")
+        }
     }
 
     private fun resetOrphanedCoordinates(move: Move) {
