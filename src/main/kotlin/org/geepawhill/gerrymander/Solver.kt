@@ -17,8 +17,12 @@ class Solver(val randoms: Random, val monitor: Monitor) {
     var target = Int.MAX_VALUE
 
     fun run(order: Int, width: Int, height: Int): List<Move> {
+        return run(Omino.fixed(order), width, height)
+    }
+
+    fun run(ominoes: Set<Omino>, width: Int, height: Int): List<Move> {
         stepCount = 0
-        prepare(order, width, height)
+        prepare(ominoes, width, height)
         while (!isSolved) {
             step()
             stepCount++
@@ -26,13 +30,13 @@ class Solver(val randoms: Random, val monitor: Monitor) {
         return moves
     }
 
-    fun prepare(order: Int, width: Int, height: Int) {
+    fun prepare(ominoes: Set<Omino>, width: Int, height: Int) {
         moves.clear()
         examined.clear()
         links.clear()
         orphanedCoordinates.clear()
         val size = Coords(width, height)
-        Omino.fixed(order).forEach { omino ->
+        ominoes.forEach { omino ->
             omino.placements(size).forEach { placement ->
                 links.add(placement)
             }

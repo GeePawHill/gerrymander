@@ -9,7 +9,7 @@ class BulkRun {
         var soFar = 0
         while (soFar++ < count) {
             val solver = Solver(Random(soFar), NullMonitor())
-            solver.prepare(5, 5, 5)
+            solver.prepare(Omino.fixed(5), 5, 5)
 //            solver.links.dump()
             var limit = 100
             var step = 0

@@ -20,6 +20,7 @@ class MainView : View("Gerrymandering Game"), Monitor {
     val countProperty = SimpleIntegerProperty(0)
     val targetProperty = SimpleIntegerProperty(0)
     val solutionMap = mutableMapOf<Coords, StackPane>()
+    val moves = mutableListOf<Placement>()
 
     val solvedProperty = SimpleStringProperty("")
     val stepCountProperty = SimpleIntegerProperty(0)
@@ -76,40 +77,21 @@ class MainView : View("Gerrymandering Game"), Monitor {
 
     private fun runAction() {
         layout(orderProperty.value, widthProperty.value, heightProperty.value)
+        val fixedPlus = mutableSetOf<Omino>()
+        fixedPlus.addAll(Omino.fixed(1))
+        val fixed = Omino.fixed(6)
+        fixedPlus.addAll(fixed)
+        moves.clear()
         runAsync {
             solver.run(
-                orderProperty.value,
+                fixedPlus,
                 widthProperty.value,
                 heightProperty.value
             )
         } ui {
-            stepCountProperty.value = solver.stepCount
             if (solver.isSolved) solvedProperty.value = "Solved it!"
             else solvedProperty.value = "Insoluble"
 
-            for (entry in solutionMap) {
-                with(entry.value.children.first() as Rectangle) {
-                    fill = Color.DARKGRAY
-                }
-                with(entry.value.children.last() as Label) {
-                    textFill = Color.WHITE
-                    text = ""
-                    font = Font.font(20.0)
-                }
-            }
-
-            solver.moves.withIndex().forEach {
-                for (coords in it.value.placement) {
-                    with(solutionMap[coords]!!) {
-                        with(children.first() as Rectangle) {
-                            fill = colors[it.index]
-                        }
-                        with(children.last() as Label) {
-                            text = it.index.toString()
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -177,7 +159,7 @@ class MainView : View("Gerrymandering Game"), Monitor {
 //        }
         adjustColors(districts)
         updateOminos(orderProperty.value)
-        solver.prepare(order, width, height)
+        solver.prepare(Omino.fixed(orderProperty.value), width, height)
         updateGrid(width, height)
     }
 
@@ -243,13 +225,37 @@ class MainView : View("Gerrymandering Game"), Monitor {
 
     override fun place(add: Placement) {
         runLater {
+            moves.add(add)
             stepCountProperty += 1
+            add.forEach { coords ->
+                with(solutionMap[coords]!!) {
+                    with(children.first() as Rectangle) {
+                        fill = getColor(moves.size - 1)
+                    }
+                    with(children.last() as Label) {
+                        text = (moves.size - 1).toString()
+                    }
+                }
+            }
+
         }
     }
 
     override fun backtrack(remove: Placement) {
         runLater {
+            moves.remove(remove)
             stepCountProperty += 1
+            remove.forEach { coords ->
+                with(solutionMap[coords]!!) {
+                    with(children.first() as Rectangle) {
+                        fill = Color.WHITE
+                    }
+                    with(children.last() as Label) {
+                        text = "X"
+                    }
+                }
+            }
+
         }
     }
 
@@ -264,6 +270,19 @@ class MainView : View("Gerrymandering Game"), Monitor {
             Color.DARKSEAGREEN,
             Color.ORANGE
         )
+
+        fun getColor(index: Int): Color {
+            while (index >= colors.size) {
+                val color = Color(
+                    Random.nextDouble(),
+                    Random.nextDouble(),
+                    Random.nextDouble(),
+                    1.0
+                )
+                colors += color
+            }
+            return colors[index]
+        }
 
         fun anchorAll(node: Node) {
             AnchorPane.setBottomAnchor(node, 0.0)
