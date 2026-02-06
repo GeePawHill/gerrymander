@@ -2,7 +2,6 @@ package org.geepawhill.gerrymander
 
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
-import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.*
@@ -33,111 +32,128 @@ class MainView : View("Gerrymandering Game") {
         hgrow = Priority.ALWAYS
         borderpane {
             anchorAll(this)
-            left = form {
-                fieldset("Layout") {
-                    field("Order") {
-                        textfield(orderProperty)
+            left = controlsView()
+            center = gridView()
+        }
+    }
+
+    private fun gridView(): VBox = vbox {
+        vbox {
+            solution = this
+        }
+        hbox {
+            label(solvedProperty)
+            label(stepCountProperty)
+        }
+    }
+
+    private fun stepAction() {
+        solver.step()
+        for (entry in solutionMap) {
+            with(entry.value.children.first() as Rectangle) {
+                fill = Color.DARKGRAY
+            }
+            with(entry.value.children.last() as Label) {
+                textFill = Color.WHITE
+                text = ""
+                font = Font.font(20.0)
+            }
+        }
+
+        solver.moves.withIndex().forEach {
+            for (coords in it.value.placement) {
+                with(solutionMap[coords]!!) {
+                    with(children.first() as Rectangle) {
+                        fill = colors[it.index]
                     }
-                    field("Width") {
-                        textfield(widthProperty)
-                    }
-                    field("Height") {
-                        textfield(heightProperty)
-                    }
-                    field("Ominos") {
-                        label(countProperty)
-                    }
-                    field("Target") {
-                        label(targetProperty)
-                    }
-                    button("Layout") {
-                        action {
-                            layout(orderProperty.value, widthProperty.value, heightProperty.value)
-                        }
-                    }
-                }
-                scrollpane {
-                    flowpane {
-                        anchorAll(this)
-                        ominos = this
+                    with(children.last() as Label) {
+                        text = it.index.toString()
                     }
                 }
             }
-            center = vbox {
-                vbox {
-                    solution = this
-                }
-                hbox {
-                    label(solvedProperty)
-                    label(stepCountProperty)
-                    alignment = Pos.CENTER
-                    button("Run") {
-                        action {
-                            layout(orderProperty.value, widthProperty.value, heightProperty.value)
-                            solver.run(
-                                orderProperty.value,
-                                widthProperty.value,
-                                heightProperty.value
-                            )
-                            stepCountProperty.value = solver.stepCount
-                            if (solver.isSolved) solvedProperty.value = "Solved it!"
-                            else solvedProperty.value = "Insoluble"
+        }
+    }
 
-                            for (entry in solutionMap) {
-                                with(entry.value.children.first() as Rectangle) {
-                                    fill = Color.DARKGRAY
-                                }
-                                with(entry.value.children.last() as Label) {
-                                    textFill = Color.WHITE
-                                    text = ""
-                                    font = Font.font(20.0)
-                                }
-                            }
+    private fun runAction() {
+        layout(orderProperty.value, widthProperty.value, heightProperty.value)
+        solver.run(
+            orderProperty.value,
+            widthProperty.value,
+            heightProperty.value
+        )
+        stepCountProperty.value = solver.stepCount
+        if (solver.isSolved) solvedProperty.value = "Solved it!"
+        else solvedProperty.value = "Insoluble"
 
-                            solver.moves.withIndex().forEach {
-                                for (coords in it.value.placement) {
-                                    with(solutionMap[coords]!!) {
-                                        with(children.first() as Rectangle) {
-                                            fill = colors[it.index]
-                                        }
-                                        with(children.last() as Label) {
-                                            text = it.index.toString()
-                                        }
-                                    }
-                                }
-                            }
+        for (entry in solutionMap) {
+            with(entry.value.children.first() as Rectangle) {
+                fill = Color.DARKGRAY
+            }
+            with(entry.value.children.last() as Label) {
+                textFill = Color.WHITE
+                text = ""
+                font = Font.font(20.0)
+            }
+        }
 
-                        }
+        solver.moves.withIndex().forEach {
+            for (coords in it.value.placement) {
+                with(solutionMap[coords]!!) {
+                    with(children.first() as Rectangle) {
+                        fill = colors[it.index]
                     }
-                    button("Step") {
-                        action {
-                            solver.step()
-                            for (entry in solutionMap) {
-                                with(entry.value.children.first() as Rectangle) {
-                                    fill = Color.DARKGRAY
-                                }
-                                with(entry.value.children.last() as Label) {
-                                    textFill = Color.WHITE
-                                    text = ""
-                                    font = Font.font(20.0)
-                                }
-                            }
-
-                            solver.moves.withIndex().forEach {
-                                for (coords in it.value.placement) {
-                                    with(solutionMap[coords]!!) {
-                                        with(children.first() as Rectangle) {
-                                            fill = colors[it.index]
-                                        }
-                                        with(children.last() as Label) {
-                                            text = it.index.toString()
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                    with(children.last() as Label) {
+                        text = it.index.toString()
                     }
                 }
+            }
+        }
+    }
+
+    private fun controlsView(): Form = form {
+        fieldset("Layout") {
+            hbox {
+                button("Layout") {
+                    action {
+                        layout(orderProperty.value, widthProperty.value, heightProperty.value)
+                    }
+                }
+                button("Run") {
+                    action {
+                        runAction()
+                    }
+                }
+                button("Step") {
+                    action {
+                        stepAction()
+                    }
+                }
+            }
+            field("Order") {
+                textfield(orderProperty)
+            }
+            field("Width") {
+                textfield(widthProperty)
+            }
+            field("Height") {
+                textfield(heightProperty)
+            }
+            field("Ominos") {
+                label(countProperty)
+            }
+            field("Target") {
+                label(targetProperty)
+            }
+            button("Layout") {
+                action {
+                    layout(orderProperty.value, widthProperty.value, heightProperty.value)
+                }
+            }
+        }
+        scrollpane {
+            flowpane {
+                anchorAll(this)
+                ominos = this
             }
         }
     }
