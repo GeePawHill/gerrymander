@@ -8,7 +8,7 @@ class BulkRun {
     fun run(count: Int) {
         var soFar = 0
         while (soFar++ < count) {
-            val solver = Solver(Random(soFar))
+            val solver = Solver(Random(soFar), NullMonitor())
             solver.prepare(5, 5, 5)
 //            solver.links.dump()
             var limit = 100

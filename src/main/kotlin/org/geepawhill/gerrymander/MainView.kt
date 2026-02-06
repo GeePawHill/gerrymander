@@ -11,9 +11,9 @@ import javafx.scene.text.Font
 import tornadofx.*
 import kotlin.random.Random
 
-class MainView : View("Gerrymandering Game") {
+class MainView : View("Gerrymandering Game"), Monitor {
 
-    val solver = Solver(Random(0))
+    val solver = Solver(Random(0), this)
     val orderProperty = SimpleIntegerProperty(6)
     val widthProperty = SimpleIntegerProperty(32)
     val heightProperty = SimpleIntegerProperty(18)
@@ -76,34 +76,37 @@ class MainView : View("Gerrymandering Game") {
 
     private fun runAction() {
         layout(orderProperty.value, widthProperty.value, heightProperty.value)
-        solver.run(
-            orderProperty.value,
-            widthProperty.value,
-            heightProperty.value
-        )
-        stepCountProperty.value = solver.stepCount
-        if (solver.isSolved) solvedProperty.value = "Solved it!"
-        else solvedProperty.value = "Insoluble"
+        runAsync {
+            solver.run(
+                orderProperty.value,
+                widthProperty.value,
+                heightProperty.value
+            )
+        } ui {
+            stepCountProperty.value = solver.stepCount
+            if (solver.isSolved) solvedProperty.value = "Solved it!"
+            else solvedProperty.value = "Insoluble"
 
-        for (entry in solutionMap) {
-            with(entry.value.children.first() as Rectangle) {
-                fill = Color.DARKGRAY
+            for (entry in solutionMap) {
+                with(entry.value.children.first() as Rectangle) {
+                    fill = Color.DARKGRAY
+                }
+                with(entry.value.children.last() as Label) {
+                    textFill = Color.WHITE
+                    text = ""
+                    font = Font.font(20.0)
+                }
             }
-            with(entry.value.children.last() as Label) {
-                textFill = Color.WHITE
-                text = ""
-                font = Font.font(20.0)
-            }
-        }
 
-        solver.moves.withIndex().forEach {
-            for (coords in it.value.placement) {
-                with(solutionMap[coords]!!) {
-                    with(children.first() as Rectangle) {
-                        fill = colors[it.index]
-                    }
-                    with(children.last() as Label) {
-                        text = it.index.toString()
+            solver.moves.withIndex().forEach {
+                for (coords in it.value.placement) {
+                    with(solutionMap[coords]!!) {
+                        with(children.first() as Rectangle) {
+                            fill = colors[it.index]
+                        }
+                        with(children.last() as Label) {
+                            text = it.index.toString()
+                        }
                     }
                 }
             }
@@ -235,6 +238,18 @@ class MainView : View("Gerrymandering Game") {
                     fill = Color.BLUE
                 }
             }
+        }
+    }
+
+    override fun place(add: Placement) {
+        runLater {
+            stepCountProperty += 1
+        }
+    }
+
+    override fun backtrack(remove: Placement) {
+        runLater {
+            stepCountProperty += 1
         }
     }
 

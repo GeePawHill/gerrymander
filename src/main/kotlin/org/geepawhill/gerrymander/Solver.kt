@@ -3,7 +3,7 @@ package org.geepawhill.gerrymander
 import tornadofx.*
 import kotlin.random.Random
 
-class Solver(val randoms: Random) {
+class Solver(val randoms: Random, val monitor: Monitor) {
     var stepCount = 0
     val moves = observableListOf<Move>()
     val links = PlacementLinks(randoms)
@@ -46,7 +46,9 @@ class Solver(val randoms: Random) {
     }
 
     fun move() {
-        move(pickLeast())
+        val placement = pickLeast()
+        move(placement)
+        monitor.place(placement)
     }
 
     fun pick(): Placement = links.random()
@@ -56,6 +58,7 @@ class Solver(val randoms: Random) {
     fun backtrack() {
         if (moves.isEmpty()) return
         val move = moves.removeLast()
+        monitor.backtrack(move.placement)
         restoreExcludedPlacements(move)
         addPlacementToExamined(move)
         resetOrphanedCoordinates(move)
