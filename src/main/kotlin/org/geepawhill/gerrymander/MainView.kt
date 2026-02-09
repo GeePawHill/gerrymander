@@ -145,14 +145,6 @@ class MainView : View("Gerrymandering Game"), Monitor {
 
     fun layout(order: Int, width: Int, height: Int) {
         val districts = (width * height) / order
-//        if (((width * height) % order) != 0) {
-//            alert(
-//                Alert.AlertType.ERROR,
-//                "Invalid Layout",
-//                "The order ($order) doesn't partition the grid ($height X $width)"
-//            )
-//            return
-//        }
         adjustColors(districts)
         updateOminos(orderProperty.value)
         solver.prepare(Omino.fixed(orderProperty.value), width, height)
@@ -253,6 +245,14 @@ class MainView : View("Gerrymandering Game"), Monitor {
             }
 
         }
+    }
+
+    override fun reset(
+        ominos: List<Omino>,
+        width: Int,
+        height: Int
+    ) {
+        
     }
 
     companion object {
