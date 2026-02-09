@@ -7,7 +7,6 @@ import javafx.scene.control.Label
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
-import javafx.scene.text.Font
 import tornadofx.*
 import kotlin.random.Random
 
@@ -49,29 +48,6 @@ class MainView : View("Gerrymandering Game"), Monitor {
 
     private fun stepAction() {
         solver.step()
-        for (entry in solutionMap) {
-            with(entry.value.children.first() as Rectangle) {
-                fill = Color.DARKGRAY
-            }
-            with(entry.value.children.last() as Label) {
-                textFill = Color.WHITE
-                text = ""
-                font = Font.font(20.0)
-            }
-        }
-
-        solver.moves.withIndex().forEach {
-            for (coords in it.value.placement) {
-                with(solutionMap[coords]!!) {
-                    with(children.first() as Rectangle) {
-                        fill = colors[it.index]
-                    }
-                    with(children.last() as Label) {
-                        text = it.index.toString()
-                    }
-                }
-            }
-        }
     }
 
     private fun runAction() {
@@ -252,7 +228,7 @@ class MainView : View("Gerrymandering Game"), Monitor {
         width: Int,
         height: Int
     ) {
-        
+
     }
 
     companion object {
