@@ -18,7 +18,6 @@ class MainView : View("Gerrymandering Game"), Monitor {
     val widthProperty = SimpleIntegerProperty(32)
     val heightProperty = SimpleIntegerProperty(18)
     val countProperty = SimpleIntegerProperty(0)
-    val targetProperty = SimpleIntegerProperty(0)
     val solutionMap = mutableMapOf<Coords, StackPane>()
     val moves = mutableListOf<Placement>()
 
@@ -125,9 +124,6 @@ class MainView : View("Gerrymandering Game"), Monitor {
             }
             field("Ominos") {
                 label(countProperty)
-            }
-            field("Target") {
-                label(targetProperty)
             }
             button("Layout") {
                 action {

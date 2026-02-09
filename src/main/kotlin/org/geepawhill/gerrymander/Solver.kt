@@ -14,8 +14,6 @@ class Solver(val randoms: Random, val monitor: Monitor) {
     val isInsoluble get() = links.size == 0 && needsBacktrack
     val needsBacktrack get() = orphanedCoordinates.isNotEmpty()
 
-    var target = Int.MAX_VALUE
-
     fun run(order: Int, width: Int, height: Int): List<Move> {
         return run(Omino.fixed(order), width, height)
     }
