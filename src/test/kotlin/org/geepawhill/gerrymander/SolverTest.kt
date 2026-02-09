@@ -47,7 +47,7 @@ class SolverTest {
     @Test
     fun `link counts`() {
         val solver = Solver(Random.Default)
-        solver.prepare(5, 10, 10)
+        solver.reset(5, 10, 10)
     }
 
     @Test
@@ -77,7 +77,7 @@ class SolverTest {
 
     @Test
     fun `backtrack from first move does not ruin my life`() {
-        solver.prepare(3, 2, 3)
+        solver.reset(3, 2, 3)
         val clone = solver.links.copy()
         val lshape = setOf(
             Coords(0, 1), Coords(1, 0), Coords(1, 1)
@@ -92,7 +92,7 @@ class SolverTest {
 
     @Test
     fun `backtrack notices when it leaves a newly-emptied cell`() {
-        solver.prepare(2, 8, 1)
+        solver.reset(2, 8, 1)
         val sideways = Omino(Coords(0, 0), Coords(1, 0))
         val center = sideways.placement(Coords(8, 1), Coords(3, 0))
         val left = sideways.placement(Coords(8, 1), Coords(0, 0))
@@ -105,14 +105,14 @@ class SolverTest {
 
     @Test
     fun `one-answer solver test`() {
-        solver.prepare(2, 2, 1)
+        solver.reset(2, 2, 1)
         solver.step()
         assertThat(solver.isSolved).isTrue()
     }
 
     @RepeatedTest(100)
     fun `2x3 solver test`() {
-        solver.prepare(2, 2, 3)
+        solver.reset(2, 2, 3)
         while (!solver.isSolved) solver.step()
     }
 }

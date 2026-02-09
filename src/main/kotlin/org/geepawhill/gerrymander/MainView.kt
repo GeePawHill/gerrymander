@@ -27,7 +27,6 @@ class MainView : View("Gerrymandering Game"), Monitor {
     lateinit var solution: VBox
 
     override val root = anchorpane {
-//        background = Background(BackgroundFill(Color.DIMGRAY, CornerRadii.EMPTY, Insets(3.0)))
         hgrow = Priority.ALWAYS
         borderpane {
             anchorAll(this)
@@ -123,7 +122,7 @@ class MainView : View("Gerrymandering Game"), Monitor {
         val districts = (width * height) / order
         adjustColors(districts)
         updateOminos(orderProperty.value)
-        solver.prepare(Omino.fixed(orderProperty.value), width, height)
+        solver.reset(Omino.fixed(orderProperty.value), width, height)
         updateGrid(width, height)
     }
 

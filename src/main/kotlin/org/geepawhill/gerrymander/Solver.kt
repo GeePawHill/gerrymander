@@ -14,13 +14,20 @@ class Solver(val randoms: Random, val monitor: Monitor) {
     val isInsoluble get() = links.size == 0 && needsBacktrack
     val needsBacktrack get() = orphanedCoordinates.isNotEmpty()
 
-    fun run(order: Int, width: Int, height: Int): List<Move> {
-        return run(Omino.fixed(order), width, height)
+    fun reset(ominoes: Set<Omino>, width: Int, height: Int) {
+        makeLinks(ominoes, width, height)
+        restart()
+    }
+
+    fun restart() {
+        moves.clear()
+        examined.clear()
+        orphanedCoordinates.clear()
     }
 
     fun run(ominoes: Set<Omino>, width: Int, height: Int): List<Move> {
         stepCount = 0
-        prepare(ominoes, width, height)
+        reset(ominoes, width, height)
         while (!isSolved) {
             step()
             stepCount++
@@ -28,13 +35,14 @@ class Solver(val randoms: Random, val monitor: Monitor) {
         return moves
     }
 
-    fun prepare(ominoes: Set<Omino>, width: Int, height: Int) {
-        moves.clear()
-        examined.clear()
+    private fun makeLinks(
+        ominos: Set<Omino>,
+        width: Int,
+        height: Int,
+    ) {
         links.clear()
-        orphanedCoordinates.clear()
         val size = Coords(width, height)
-        ominoes.forEach { omino ->
+        ominos.forEach { omino ->
             omino.placements(size).forEach { placement ->
                 links.add(placement)
             }

@@ -7,11 +7,6 @@ class PlacementLinks(val randoms: Random) {
     val map = mutableMapOf<Coords, MutableSet<Placement>>()
     val size get() = map.size
 
-    fun dump() {
-        val items = map.entries.flatMap { it.value }.count()
-        println("Links: $items")
-    }
-
     fun clear() = map.clear()
 
     fun copy(): PlacementLinks {
