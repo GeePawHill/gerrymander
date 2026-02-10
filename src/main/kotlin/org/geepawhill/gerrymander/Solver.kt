@@ -12,7 +12,7 @@ class Solver(val randoms: Random, val monitor: Monitor) {
     val examined = mutableSetOf<Placement>()
     val isSolved get() = links.size == 0 && orphanedCoordinates.isEmpty()
     val isInsoluble get() = links.size == 0 && needsBacktrack
-    val needsBacktrack get() = orphanedCoordinates.isNotEmpty()
+    var needsBacktrack = false
 
     fun reset(ominoes: Set<Omino>, width: Int, height: Int) {
         makeLinks(ominoes, width, height)
@@ -67,12 +67,14 @@ class Solver(val randoms: Random, val monitor: Monitor) {
     fun pickLeast(): Placement = links.least()
 
     fun backtrack() {
+        needsBacktrack = false
         if (moves.isEmpty()) return
         val move = moves.removeLast()
         monitor.backtrack(move.placement)
         restoreExcludedPlacements(move)
         addPlacementToExamined(move)
         resetOrphanedCoordinates(move)
+        if (orphanedCoordinates.isNotEmpty()) needsBacktrack = true
         if (orphanedCoordinates.isNotEmpty() && moves.isEmpty()) {
             throw RuntimeException("Whatever.")
         }
@@ -104,6 +106,7 @@ class Solver(val randoms: Random, val monitor: Monitor) {
         }
         val result = Move(placement, collisions)
         moves += result
+        if (orphanedCoordinates.isNotEmpty()) needsBacktrack = true
         return result
     }
 
