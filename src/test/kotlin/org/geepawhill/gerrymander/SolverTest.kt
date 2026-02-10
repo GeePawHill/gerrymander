@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
+import kotlin.math.max
 import kotlin.random.Random
 
 class SolverTest {
@@ -107,5 +108,22 @@ class SolverTest {
     fun `2x3 solver test`() {
         solver.reset(Omino.fixed(2), 2, 3)
         while (!solver.isSolved) solver.step()
+    }
+
+    @Test
+    fun `huge run with average and max`() {
+        var max = 0
+        var average = 0
+        (0 until 1000).forEach { it ->
+            solver.run(Omino.fixed(6), 32, 18)
+            max = max(max, solver.stepCount)
+            average += solver.stepCount
+            println("$it ${solver.stepCount} ${solver.links.randoms.calls}")
+            if (it == 508) {
+                println("Here")
+            }
+        }
+        average /= 999
+        println("$max $average")
     }
 }
