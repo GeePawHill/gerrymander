@@ -17,6 +17,7 @@ class Solver(val randoms: Random, val monitor: Monitor) {
     fun reset(ominoes: Set<Omino>, width: Int, height: Int) {
         makeLinks(ominoes, width, height)
         restart()
+        monitor.reset(ominoes.toList(), width, height)
     }
 
     fun restart() {

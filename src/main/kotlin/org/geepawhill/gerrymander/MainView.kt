@@ -54,11 +54,11 @@ class MainView : View("Gerrymandering Game"), Monitor {
         val fixedPlus = mutableSetOf<Omino>()
         fixedPlus.addAll(Omino.fixed(1))
         val fixed = Omino.fixed(6)
-        fixedPlus.addAll(fixed)
+//        fixedPlus.addAll(fixed)
         moves.clear()
         runAsync {
             solver.run(
-                fixedPlus,
+                fixed,
                 widthProperty.value,
                 heightProperty.value
             )
