@@ -36,7 +36,7 @@ class SolverTest {
         assertThat(solver.links[placements[0].first()]).contains(placements[0])
     }
 
-    @Disabled
+    @Disabled("Slow")
     @Test
     fun `link counts`() {
         val solver = Solver(Random.Default, NullMonitor())
