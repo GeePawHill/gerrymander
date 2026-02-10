@@ -8,6 +8,7 @@ class Solver(val randoms: Random, val monitor: Monitor) {
     val moves = observableListOf<Move>()
     val links = PlacementLinks(randoms)
     val orphanedCoordinates = mutableSetOf<Coords>()
+    val finder = GroupFinder()
 
     val examined = mutableSetOf<Placement>()
     val isSolved get() = links.size == 0 && orphanedCoordinates.isEmpty()
@@ -74,7 +75,10 @@ class Solver(val randoms: Random, val monitor: Monitor) {
         restoreExcludedPlacements(move)
         addPlacementToExamined(move)
         resetOrphanedCoordinates(move)
-        if (orphanedCoordinates.isNotEmpty()) needsBacktrack = true
+        if (orphanedCoordinates.isNotEmpty()) {
+            needsBacktrack = true
+        }
+
         if (orphanedCoordinates.isNotEmpty() && moves.isEmpty()) {
             throw RuntimeException("Whatever.")
         }
@@ -106,7 +110,19 @@ class Solver(val randoms: Random, val monitor: Monitor) {
         }
         val result = Move(placement, collisions)
         moves += result
-        if (orphanedCoordinates.isNotEmpty()) needsBacktrack = true
+        if (orphanedCoordinates.isNotEmpty()) {
+            needsBacktrack = true
+            return result
+        }
+        val groups = finder.find(links.map.keys.toMutableList())
+        if (groups.size > 1) {
+            groups.forEach {
+                if (it.size % 6 != 0) {
+                    needsBacktrack = true
+                    return result
+                }
+            }
+        }
         return result
     }
 

@@ -119,6 +119,7 @@ class MainView : View("Gerrymandering Game"), Monitor {
     }
 
     fun layout(order: Int, width: Int, height: Int) {
+        moves.clear()
         val districts = (width * height) / order
         adjustColors(districts)
         updateOminos(orderProperty.value)
@@ -227,7 +228,7 @@ class MainView : View("Gerrymandering Game"), Monitor {
         width: Int,
         height: Int
     ) {
-
+        stepCountProperty.value = 0
     }
 
     companion object {
