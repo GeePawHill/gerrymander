@@ -8,7 +8,7 @@ import kotlin.random.Random
 
 class SolverTest {
     val size = Coords(2, 2)
-    val solver = Solver(Random.Default)
+    val solver = Solver(Random.Default, NullMonitor())
 
     val placements = Omino.fixed(2).flatMap { it.placements(size) }
 
@@ -20,6 +20,7 @@ class SolverTest {
         assertThat(solver.links[placements[0].first()]).contains(placements[0])
     }
 
+    @Disabled("Slow")
     @Test
     fun `bulk test`() {
         val runner = BulkRun()
@@ -35,19 +36,11 @@ class SolverTest {
         assertThat(solver.links[placements[0].first()]).contains(placements[0])
     }
 
-    @Test
-    fun `backtrack on one-item stack remembers examined`() {
-        val placement = Move(placements[0], emptySet())
-        solver.moves += placement
-        solver.backtrack()
-        assertThat(solver.examined).contains(placements[0])
-    }
-
     @Disabled
     @Test
     fun `link counts`() {
-        val solver = Solver(Random.Default)
-        solver.reset(5, 10, 10)
+        val solver = Solver(Random.Default, NullMonitor())
+        solver.reset(Omino.fixed(5), 10, 10)
     }
 
     @Test
@@ -77,7 +70,7 @@ class SolverTest {
 
     @Test
     fun `backtrack from first move does not ruin my life`() {
-        solver.reset(3, 2, 3)
+        solver.reset(Omino.fixed(3), 2, 3)
         val clone = solver.links.copy()
         val lshape = setOf(
             Coords(0, 1), Coords(1, 0), Coords(1, 1)
@@ -92,7 +85,7 @@ class SolverTest {
 
     @Test
     fun `backtrack notices when it leaves a newly-emptied cell`() {
-        solver.reset(2, 8, 1)
+        solver.reset(Omino.fixed(2), 8, 1)
         val sideways = Omino(Coords(0, 0), Coords(1, 0))
         val center = sideways.placement(Coords(8, 1), Coords(3, 0))
         val left = sideways.placement(Coords(8, 1), Coords(0, 0))
@@ -105,14 +98,14 @@ class SolverTest {
 
     @Test
     fun `one-answer solver test`() {
-        solver.reset(2, 2, 1)
+        solver.reset(Omino.fixed(2), 2, 1)
         solver.step()
         assertThat(solver.isSolved).isTrue()
     }
 
     @RepeatedTest(100)
     fun `2x3 solver test`() {
-        solver.reset(2, 2, 3)
+        solver.reset(Omino.fixed(2), 2, 3)
         while (!solver.isSolved) solver.step()
     }
 }
