@@ -1,31 +1,27 @@
 package org.geepawhill.gerrymander
 
 class GroupFinder {
+    val working = mutableListOf<Coords>()
+    val groups = mutableListOf<MutableSet<Coords>>()
+
     fun find(emptys: List<Coords>): List<MutableSet<Coords>> {
-        val working = emptys.toMutableList()
-        val groups = mutableListOf<MutableSet<Coords>>()
+        working.clear()
+        working.addAll(emptys)
+        groups.clear()
         while (working.isNotEmpty()) {
-            groups.add(findGroup(working))
+            groups.add(mutableSetOf())
+            findGroup(working.first())
         }
         return groups
     }
 
-    private fun findGroup(working: MutableList<Coords>): MutableSet<Coords> {
-        return findGroup(working, working.first())
-    }
-
-    fun findGroup(working: MutableList<Coords>, cell: Coords): MutableSet<Coords> {
-        val result = mutableSetOf<Coords>()
+    fun findGroup(cell: Coords) {
         working.remove(cell)
-        result.add(cell)
+        groups.last().add(cell)
         cell.neighbors
             .filter { working.contains(it) }
             .forEach {
-                result.add(it)
-                working.remove(it)
-                result.addAll(findGroup(working, it))
+                findGroup(it)
             }
-        return result
     }
-
 }
