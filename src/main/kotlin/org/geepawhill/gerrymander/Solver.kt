@@ -69,6 +69,9 @@ class Solver(val randoms: RandomWrapper, val monitor: Monitor) {
         val move = moves.removeLast()
         monitor.backtrack(move.placement)
         restoreExcludedPlacements(move)
+        if (moves.isEmpty()) {
+            examined.forEach { links.add(it) }
+        }
         addPlacementToExamined(move)
         resetOrphanedCoordinates(move)
         if (orphanedCoordinates.isNotEmpty()) {

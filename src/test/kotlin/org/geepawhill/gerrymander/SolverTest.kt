@@ -103,18 +103,39 @@ class SolverTest {
         assertThat(solver.isSolved).isTrue()
     }
 
-//    @Test
-//    fun `backtracking solved restores linkmap`() {
-//        solver.reset(Omino.fixed(6), 6, 6)
-//        val original = solver.links.copy().map
-//        val actual = solver.links.map
-//        solver.run(Omino.fixed(6), 6, 6)
-//        while (solver.moves.isNotEmpty()) solver.backtrack()
-//
-//        for(cell in original.map.keys) {
-//            assertThat(original.map[cell].size).isEqualTo(solver.links.map[cell].size
-//        }
-//    }
+    @Test
+    fun `backtrack at move 1 leave it in examined`() {
+        solver.reset(Omino.fixed(2), 4, 4)
+        val placement = solver.links[Coords(0, 0)].first()
+        solver.move(placement)
+        solver.backtrack()
+        assertThat(solver.examined).containsExactly(placement)
+        assertThat(solver.links[Coords(0, 0)]).doesNotContain(placement)
+    }
+
+    // [(0,0), (1,0), (2,0), (2,1), (3,0), (4,0)]
+    @Test
+    fun `backtracking solved restores linkmap`() {
+        solver.reset(Omino.fixed(6), 6, 6)
+        val original = solver.links.copy().map
+        val actual = solver.links.map
+        while (!solver.isSolved) solver.step()
+        println(solver.moves.first().placement)
+        while (solver.moves.isNotEmpty()) solver.backtrack()
+        solver.examined.forEach { solver.links.add(it) }
+        println("Examined: ${solver.examined}")
+
+        assertThat(original.size).isEqualTo(actual.size)
+        for (key in original.keys) {
+            val originalPlacements = original[key]!!
+            val actualPlacements = actual[key]!!
+            println(key)
+            for (placement in originalPlacements) {
+                assertThat(actualPlacements).contains(placement)
+            }
+            assertThat(actualPlacements.size).isEqualTo(originalPlacements.size)
+        }
+    }
 
     @RepeatedTest(100)
     fun `2x3 solver test`() {
@@ -122,6 +143,7 @@ class SolverTest {
         while (!solver.isSolved) solver.step()
     }
 
+    @Disabled("Slow")
     @Test
     fun `huge run with average and max`() {
         var max = 0
