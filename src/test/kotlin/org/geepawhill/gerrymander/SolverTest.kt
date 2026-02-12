@@ -5,11 +5,10 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import kotlin.math.max
-import kotlin.random.Random
 
 class SolverTest {
     val size = Coords(2, 2)
-    val solver = Solver(Random.Default, NullMonitor())
+    val solver = Solver(RandomWrapper(), NullMonitor())
 
     val placements = Omino.fixed(2).flatMap { it.placements(size) }
 
@@ -40,7 +39,7 @@ class SolverTest {
     @Disabled("Slow")
     @Test
     fun `link counts`() {
-        val solver = Solver(Random.Default, NullMonitor())
+        val solver = Solver(RandomWrapper(), NullMonitor())
         solver.reset(Omino.fixed(5), 10, 10)
     }
 
@@ -104,6 +103,19 @@ class SolverTest {
         assertThat(solver.isSolved).isTrue()
     }
 
+//    @Test
+//    fun `backtracking solved restores linkmap`() {
+//        solver.reset(Omino.fixed(6), 6, 6)
+//        val original = solver.links.copy().map
+//        val actual = solver.links.map
+//        solver.run(Omino.fixed(6), 6, 6)
+//        while (solver.moves.isNotEmpty()) solver.backtrack()
+//
+//        for(cell in original.map.keys) {
+//            assertThat(original.map[cell].size).isEqualTo(solver.links.map[cell].size
+//        }
+//    }
+
     @RepeatedTest(100)
     fun `2x3 solver test`() {
         solver.reset(Omino.fixed(2), 2, 3)
@@ -114,16 +126,17 @@ class SolverTest {
     fun `huge run with average and max`() {
         var max = 0
         var average = 0
+        val base = 1000
+        solver.randoms.reset(0, 193469)
         (0 until 1000).forEach { it ->
             solver.run(Omino.fixed(6), 32, 18)
             max = max(max, solver.stepCount)
             average += solver.stepCount
-            println("$it ${solver.stepCount} ${solver.links.randoms.calls}")
-            if (it == 508) {
-                println("Here")
-            }
+            println("${it + base} ${solver.stepCount} ${solver.randoms.count}")
+            if (solver.stepCount > 1000) println("Long.")
+            if (!solver.isSolved) println("Unsolved.")
         }
-        average /= 999
+        average /= 1000
         println("$max $average")
     }
 }

@@ -1,9 +1,8 @@
 package org.geepawhill.gerrymander
 
 import tornadofx.*
-import kotlin.random.Random
 
-class Solver(val randoms: Random, val monitor: Monitor) {
+class Solver(val randoms: RandomWrapper, val monitor: Monitor) {
     var stepCount = 0
     val moves = observableListOf<Move>()
     val links = PlacementLinks(randoms)
@@ -12,7 +11,6 @@ class Solver(val randoms: Random, val monitor: Monitor) {
 
     val examined = mutableSetOf<Placement>()
     val isSolved get() = links.size == 0 && orphanedCoordinates.isEmpty()
-    val isInsoluble get() = links.size == 0 && needsBacktrack
     var needsBacktrack = false
 
     fun reset(ominoes: Set<Omino>, width: Int, height: Int) {
@@ -62,8 +60,6 @@ class Solver(val randoms: Random, val monitor: Monitor) {
         move(placement)
         monitor.place(placement)
     }
-
-    fun pick(): Placement = links.random()
 
     fun pickLeast(): Placement = links.least()
 

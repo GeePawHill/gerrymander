@@ -12,7 +12,7 @@ import kotlin.random.Random
 
 class MainView : View("Gerrymandering Game"), Monitor {
 
-    val solver = Solver(Random(0), this)
+    val solver = Solver(RandomWrapper(), this)
     val orderProperty = SimpleIntegerProperty(6)
     val widthProperty = SimpleIntegerProperty(32)
     val heightProperty = SimpleIntegerProperty(18)
@@ -72,6 +72,15 @@ class MainView : View("Gerrymandering Game"), Monitor {
     private fun controlsView(): Form = form {
         fieldset("Layout") {
             hbox {
+                button("Replay") {
+                    action {
+                        // 346155
+                        // 89598
+                        // 332059
+                        // 361615
+                        solver.randoms.reset(0, 361615)
+                    }
+                }
                 button("Layout") {
                     action {
                         layout(orderProperty.value, widthProperty.value, heightProperty.value)
@@ -154,10 +163,10 @@ class MainView : View("Gerrymandering Game"), Monitor {
                                 SOLUTION_SIZE - 2,
                                 SOLUTION_SIZE - 2
                             ) {
-                                fill = Color.DARKGRAY
-                                stroke = Color.WHITE
+                                fill = Color.WHITE
+                                stroke = Color.BLACK
                             }
-                            label("")
+                            label("X")
                         }
                     }
                 }

@@ -1,14 +1,12 @@
 package org.geepawhill.gerrymander
 
-import kotlin.random.Random
-
 class BulkRun {
     val stepHistogram = HashMap<Int, Int>()
 
     fun run(count: Int) {
         var soFar = 0
         while (soFar++ < count) {
-            val solver = Solver(Random(soFar), NullMonitor())
+            val solver = Solver(RandomWrapper(), NullMonitor())
             solver.reset(Omino.fixed(5), 5, 5)
             var limit = 100
             var step = 0
